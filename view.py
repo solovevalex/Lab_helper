@@ -306,42 +306,6 @@ class Ui_MainWindow(object):
         self.btn_mis_new.setObjectName("btn_mis_new")
         self.menu.addTab(self.mistakes, "")
 
-        def createMenuBar(self):
-            self.menuBar = QMenuBar(self)
-            self.setMenuBar(self.menuBar)
-
-            fileMenu = QMenu("&Файл", self)
-            self.menuBar.addMenu(fileMenu)
-
-            # open_file = fileMenu.addMenu("&Открыть")
-            # save_file = fileMenu.addMenu("&Сохранить")
-
-            fileMenu.addAction('Открыть', self.action_clicked)
-            fileMenu.addAction('Сохранить', self.action_clicked)
-
-        @QtCore.pyqtSlot()
-        def action_clicked(self):
-            action = self.sender()
-            if action.text() == "Открыть":
-                fname = QFileDialog.getOpenFileName(self)[0]
-                try:
-                    f = open(fname, 'r')
-                    with f:
-                        date = f.read()
-                        self.text_edit.setText(date)
-                    f.close()
-                except FileNotFoundError:
-                    print('No such file')
-
-            elif action.text() == "Сохранить":
-                fname = QFileDialog.getSaveFileName(self)[0]
-                try:
-                    f = open(fname, 'w')
-                    text = self.text_edit.toPlainText()
-                    f.write(text)
-                    f.close()
-                except FileNotFoundError:
-                    print('No such file')
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
@@ -350,16 +314,15 @@ class Ui_MainWindow(object):
         self.menu_2 = QtWidgets.QMenu(self.menuBar)
         self.menu_2.setObjectName("menu_2")
         MainWindow.setMenuBar(self.menuBar)
-        self.action_2 = QtWidgets.QAction(MainWindow)
-        self.action_2.setObjectName("action_2")
-        self.menu_2.addSeparator()
-        self.menu_2.addAction(self.action_2)
+
         self.menuBar.addAction(self.menu_2.menuAction())
 
         self.retranslateUi(MainWindow)
         self.menu.setCurrentIndex(2)
         self.menu_graphics.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+
 
     def retranslateUi(self, MainWindow):
         # Здесь происходит занесение созданных объектов в пользовательское окно
@@ -404,7 +367,7 @@ class Ui_MainWindow(object):
         self.btn_mis_new.setText(_translate("MainWindow", "Обновить окно!"))
         self.menu.setTabText(self.menu.indexOf(self.mistakes), _translate("MainWindow", "Погрешности"))
         self.menu_2.setTitle(_translate("MainWindow", "Справка"))
-        self.action_2.setText(_translate("MainWindow", "О программе"))
+
 
 
 if __name__ == "__main__":
