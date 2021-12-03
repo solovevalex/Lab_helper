@@ -8,16 +8,8 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1000, 719)
 
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
-
-        self.menu = QtWidgets.QTabWidget(self.centralwidget)
-        self.menu.setGeometry(QtCore.QRect(0, 0, 1000, 700))
-        self.menu.setObjectName("menu")
-
-        self.menuBar = QtWidgets.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 1000, 26))
-        self.menuBar.setObjectName("menuBar")
+        """Создание всего..."""
+        self.create_main()
         self.create_menu_Bar()
         self.create_mis()
         self.create_graphics()
@@ -34,12 +26,24 @@ class Ui_MainWindow(object):
 
         """Воссоединение всего!"""
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def create_main(self):
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+
+        self.menu = QtWidgets.QTabWidget(self.centralwidget)
+        self.menu.setGeometry(QtCore.QRect(0, 0, 1000, 700))
+        self.menu.setObjectName("menu")
+
+        self.menuBar = QtWidgets.QMenuBar(MainWindow)
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 1000, 26))
+        self.menuBar.setObjectName("menuBar")
+
     def create_menu_Bar(self):
 
         self.menu_btn = QtWidgets.QMenu(self.menuBar)
         self.menu_btn.setObjectName("menu_btn")
         self.menuBar.addAction(self.menu_btn.menuAction())
-
 
     def create_ecxel_fail(self):
             self.ecxel_fail = QtWidgets.QWidget()
