@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMenuBar, QMenu, QFileDialog
+
 
 
 class Ui_MainWindow(object):
@@ -15,7 +15,33 @@ class Ui_MainWindow(object):
         self.menu.setGeometry(QtCore.QRect(0, 0, 1000, 700))
         self.menu.setObjectName("menu")
 
-        def create_ecxel_fail(self):
+        self.menuBar = QtWidgets.QMenuBar(MainWindow)
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 1000, 26))
+        self.menuBar.setObjectName("menuBar")
+        self.create_menu_Bar()
+        self.create_mis()
+        self.create_graphics()
+        self.create_ecxel_fail()
+
+        """Выполняется занесение в главное окно"""
+        self.retranslateUi(MainWindow)
+        self.menu.setCurrentIndex(2)
+        self.menu_graphics.setCurrentIndex(0)
+
+        """устанавливается menubar, centralwidget"""
+        MainWindow.setCentralWidget(self.centralwidget)
+        MainWindow.setMenuBar(self.menuBar)
+
+        """Воссоединение всего!"""
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+    def create_menu_Bar(self):
+
+        self.menu_btn = QtWidgets.QMenu(self.menuBar)
+        self.menu_btn.setObjectName("menu_btn")
+        self.menuBar.addAction(self.menu_btn.menuAction())
+
+
+    def create_ecxel_fail(self):
             self.ecxel_fail = QtWidgets.QWidget()
             self.ecxel_fail.setObjectName("ecxel_fail")
             self.label_ex = QtWidgets.QLabel(self.ecxel_fail)
@@ -39,11 +65,9 @@ class Ui_MainWindow(object):
             self.btn_ex.setFont(font)
             self.btn_ex.setStyleSheet("background-color: rgb(85, 170, 255);")
             self.btn_ex.setObjectName("btn_ex")
-        create_ecxel_fail(self)
-        self.menu.addTab(self.ecxel_fail, "")
+            self.menu.addTab(self.ecxel_fail, "")
 
-
-        def create_graphics(self):
+    def create_graphics(self):
             self.graphics = QtWidgets.QWidget()
             self.graphics.setObjectName("graphics")
             self.menu_graphics = QtWidgets.QTabWidget(self.graphics)
@@ -123,7 +147,7 @@ class Ui_MainWindow(object):
             font.setWeight(75)
             self.btn_start_graph_1.setFont(font)
             self.btn_start_graph_1.setStyleSheet("background-color: rgb(85, 0, 255);\n"
-"backgro    und-color: rgb(170, 170, 255);")
+                                                 "background-color: rgb(170, 170, 255);")
             self.btn_start_graph_1.setObjectName("btn_start_graph_1")
             self.formula_graph_need_1 = QtWidgets.QTextEdit(self.graphics_main)
             self.formula_graph_need_1.setGeometry(QtCore.QRect(100, 40, 801, 87))
@@ -164,10 +188,9 @@ class Ui_MainWindow(object):
             self.btn_new_graph_1.setStyleSheet("background-color: rgb(85, 170, 255);")
             self.btn_new_graph_1.setObjectName("btn_new_graph_1")
             self.menu_graphics.addTab(self.graphics_main, "")
-        create_graphics(self)
-        self.menu.addTab(self.graphics, "")
+            self.menu.addTab(self.graphics, "")
 
-        def create_mis(self):
+    def create_mis(self):
             self.mistakes = QtWidgets.QWidget()
             self.mistakes.setObjectName("mistakes")
             self.label_mis_high_1 = QtWidgets.QLabel(self.mistakes)
@@ -300,38 +323,18 @@ class Ui_MainWindow(object):
             font.setBold(True)
             font.setWeight(75)
             self.btn_mis_new.setFont(font)
-            self.btn_mis_new.setStyleSheet("\n"
-"background-color: rgb(255, 85, 0);")
-        create_mis(self)
-        self.btn_mis_new.setObjectName("btn_mis_new")
-        self.menu.addTab(self.mistakes, "")
-
-
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menuBar = QtWidgets.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 1000, 26))
-        self.menuBar.setObjectName("menuBar")
-        self.menu_2 = QtWidgets.QMenu(self.menuBar)
-        self.menu_2.setObjectName("menu_2")
-        MainWindow.setMenuBar(self.menuBar)
-
-        self.menuBar.addAction(self.menu_2.menuAction())
-
-        self.retranslateUi(MainWindow)
-        self.menu.setCurrentIndex(2)
-        self.menu_graphics.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
-
+            self.btn_mis_new.setStyleSheet("background-color: rgb(255, 85, 0);")
+            self.btn_mis_new.setObjectName("btn_mis_new")
+            self.menu.addTab(self.mistakes, "")
 
     def retranslateUi(self, MainWindow):
         # Здесь происходит занесение созданных объектов в пользовательское окно
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label_ex.setText(_translate("MainWindow", "Введите полный путь к Excel файлу,\n"
-"с которым вы собираетесь работать\n"
-"(из этого файла будут считываться данные\n"
-"указанные через индексы)"))
+                                            "с которым вы собираетесь работать\n"
+                                            "(из этого файла будут считываться данные\n"
+                                            "указанные через индексы)"))
         self.btn_ex.setText(_translate("MainWindow", "Работать с этим файлом!"))
         self.menu.setTabText(self.menu.indexOf(self.ecxel_fail), _translate("MainWindow", "Выбор excel файла"))
         self.label_graph_high_1.setText(_translate("MainWindow", "введите формулу для графика:"))
@@ -346,17 +349,17 @@ class Ui_MainWindow(object):
         self.label_graph_high_4.setText(_translate("MainWindow", "добавьте галочки, если нужно"))
         self.btn_start_graph_1.setText(_translate("MainWindow", "Получить график!"))
         self.btn_add_graph_1.setText(_translate("MainWindow", "хочу добавить график\n"
-"в те же координатные оси"))
+                                                "в те же координатные оси"))
         self.btn_new_graph_1.setText(_translate("MainWindow", "Хочу создавать новый график.\n"
-"Соглашаюсь удалить\n"
-"предыдущие мои графики"))
+                                                "Соглашаюсь удалить\n"
+                                                "предыдущие мои графики"))
         self.menu_graphics.setTabText(self.menu_graphics.indexOf(self.graphics_main), _translate("MainWindow", "главный график"))
         self.menu.setTabText(self.menu.indexOf(self.graphics), _translate("MainWindow", "графики"))
         self.label_mis_high_1.setText(_translate("MainWindow", "введите формулу для величины, \n"
-"погрешность которой вы хотите посчитать"))
+                                                 "погрешность которой вы хотите посчитать"))
         self.label_mis_high_2.setText(_translate("MainWindow", "укажите, какие буквы являются константой"))
         self.label_mis_high_5.setText(_translate("MainWindow", "если хотите получить числовое значение,\n"
-"введите числовые значения переменных и констант"))
+                                                 "введите числовые значения переменных и констант"))
         self.number_mistake.setText(_translate("MainWindow", "Здесь вы получите числовое значение:"))
         self.label_small_1.setText(_translate("MainWindow", "значение констант"))
         self.label_small_2.setText(_translate("MainWindow", "среднее переменной"))
@@ -366,7 +369,7 @@ class Ui_MainWindow(object):
         self.btn_mis_getFigure.setText(_translate("MainWindow", "Получить числовое значение"))
         self.btn_mis_new.setText(_translate("MainWindow", "Обновить окно!"))
         self.menu.setTabText(self.menu.indexOf(self.mistakes), _translate("MainWindow", "Погрешности"))
-        self.menu_2.setTitle(_translate("MainWindow", "Справка"))
+        self.menu_btn.setTitle(_translate("MainWindow", "Справка"))
 
 
 
