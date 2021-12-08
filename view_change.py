@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+import openpyxl as xls
 
 # Здесь объявлю возможные имена для дополнительных графических окон
 names_start = ['график 2', 'график 3', 'график 4', 'график 5', 'график 6', 'график 7', 'график 8', 'график 9', 'график 10']
@@ -7,6 +8,12 @@ value_start = dict(graph_2=0,  graph_3=0,  graph_4=0,  graph_5=0,  graph_6=0,  g
 value_use = dict(graph_2=0,  graph_3=0,  graph_4=0,  graph_5=0,  graph_6=0,  graph_7=0,  graph_8=0,  graph_9=0, graph_10=0)
 value_names = ['graph_1', 'graph_2', 'graph_3', 'graph_4', 'graph_5', 'graph_6', 'graph_7', 'graph_8',
                        'graph_9', 'graph_10']
+ecxel_fail = None
+dict_mis_const = {}
+
+
+
+
 class add_graph():
     def __init__(self, name):
         self.graph = QtWidgets.QWidget()
@@ -36,14 +43,14 @@ class add_graph():
         font.setWeight(75)
         self.label_graphics_high_2.setFont(font)
         self.label_graphics_high_2.setObjectName("label_graphics_high_2")
-        self.point_Y = QtWidgets.QPlainTextEdit(self.graph)
+        self.point_Y = QtWidgets.QTextEdit(self.graph)
         self.point_Y.setGeometry(QtCore.QRect(310, 230, 261, 41))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
         self.point_Y.setFont(font)
         self.point_Y.setObjectName("point_Y")
-        self.point_X = QtWidgets.QPlainTextEdit(self.graph)
+        self.point_X = QtWidgets.QTextEdit(self.graph)
         self.point_X.setGeometry(QtCore.QRect(310, 180, 261, 41))
         font = QtGui.QFont()
         font.setBold(True)
@@ -92,17 +99,7 @@ class add_graph():
 
 
 class Ui_MainWindow(object):
-    # # Здесь объявлю возможные имена для дополнительных графических окон
-    # names_start = ['график 2', 'график 3', 'график 4', 'график 5', 'график 6', 'график 7', 'график 8', 'график 9',
-    #                'график 10']
-    # names_use = ['график 2', 'график 3', 'график 4', 'график 5', 'график 6', 'график 7', 'график 8', 'график 9',
-    #              'график 10']
-    # value_names = ['graph_1', 'graph_2', 'graph_3', 'graph_4', 'graph_5', 'graph_6', 'graph_7', 'graph_8',
-    #                    'graph_9', 'graph_10']
-    # value_start = dict(graph_1=0, graph_2=0, graph_3=0, graph_4=0, graph_5=0, graph_6=0, graph_7=0, graph_8=0,
-    #                    graph_9=0, graph_10=0)
-    # value_use = dict(graph_1=0, graph_2=0, graph_3=0, graph_4=0, graph_5=0, graph_6=0, graph_7=0, graph_8=0, graph_9=0,
-    #                  graph_10=0)
+
     def setupUi(self, MainWindow):
 
         MainWindow.setObjectName("MainWindow")
@@ -114,9 +111,6 @@ class Ui_MainWindow(object):
         self.create_ecxel_fail()
         self.create_mis()
         self.create_graphics()
-
-
-
 
         """Выполняется занесение в главное окно"""
         self.retranslateUi(MainWindow)
@@ -130,6 +124,7 @@ class Ui_MainWindow(object):
         """Воссоединение всего!"""
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         self.add_functions()
+
 
 
     def create_ecxel_fail(self):
@@ -248,14 +243,14 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.formula_graph_need_1.setFont(font)
         self.formula_graph_need_1.setObjectName("formula_graph_need_1")
-        self.point_X_1 = QtWidgets.QPlainTextEdit(self.graphics_main)
+        self.point_X_1 = QtWidgets.QTextEdit(self.graphics_main)
         self.point_X_1.setGeometry(QtCore.QRect(100, 170, 261, 41))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
         self.point_X_1.setFont(font)
         self.point_X_1.setObjectName("point_X_1")
-        self.point_Y_1 = QtWidgets.QPlainTextEdit(self.graphics_main)
+        self.point_Y_1 = QtWidgets.QTextEdit(self.graphics_main)
         self.point_Y_1.setGeometry(QtCore.QRect(100, 210, 261, 41))
         font = QtGui.QFont()
         font.setBold(True)
@@ -417,7 +412,7 @@ class Ui_MainWindow(object):
         self.horisontalCorrect_mis = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
         self.horisontalCorrect_mis.setContentsMargins(0, 0, 0, 0)
         self.horisontalCorrect_mis.setObjectName("horisontalCorrect_mis")
-        self.text_mistake_const = QtWidgets.QPlainTextEdit(self.horizontalLayoutWidget)
+        self.text_mistake_const = QtWidgets.QTextEdit(self.horizontalLayoutWidget)
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
@@ -425,7 +420,7 @@ class Ui_MainWindow(object):
         self.text_mistake_const.setPlainText("")
         self.text_mistake_const.setObjectName("text_mistake_const")
         self.horisontalCorrect_mis.addWidget(self.text_mistake_const)
-        self.text_mistake_var_middle = QtWidgets.QPlainTextEdit(self.horizontalLayoutWidget)
+        self.text_mistake_var_middle = QtWidgets.QTextEdit(self.horizontalLayoutWidget)
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
@@ -433,7 +428,7 @@ class Ui_MainWindow(object):
         self.text_mistake_var_middle.setPlainText("")
         self.text_mistake_var_middle.setObjectName("text_mistake_var_middle")
         self.horisontalCorrect_mis.addWidget(self.text_mistake_var_middle)
-        self.text_mistake_var_deviation = QtWidgets.QPlainTextEdit(self.horizontalLayoutWidget)
+        self.text_mistake_var_deviation = QtWidgets.QTextEdit(self.horizontalLayoutWidget)
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
@@ -545,18 +540,13 @@ class Ui_MainWindow(object):
         # функция для экселя
         self.btn_ex.clicked.connect(lambda: print('Ok'))
         # функции для погрешностей
-        self.btn_mis_getFormula.clicked.connect(lambda: print('Ok'))
-        self.btn_mis_getFigure.clicked.connect(lambda: print('Ok'))
-        self.btn_mis_new.clicked.connect(lambda: print('Ok'))
+        self.btn_mis_getFormula.clicked.connect(lambda: self.set_text_value(self.text_mistake_const, ['q','w','e','r','t','y']))
+        self.btn_mis_getFigure.clicked.connect(lambda: print(self.create_dict_for_mis_excel(self.text_mistake_const, dict_mis_const)))
+        self.btn_mis_new.clicked.connect(lambda: print(self.read_text(self.formula_mistake_need)))
         # функции для графиков
         self.btn_add_graph_1.clicked.connect(lambda: self.create_window_graph_add())
         self.btn_new_graph_1.clicked.connect(lambda: self.delete_window_graph_add())
-
-
-
-
-
-        # self.btn_start_graph_1.clicked.connect(lambda: Ann_function_for_graphic(set_params_graph()))
+        self.btn_start_graph_1.clicked.connect(lambda: print('ok'))
 
     def create_window_graph_add(self):
         for key in value_use:
@@ -573,7 +563,6 @@ class Ui_MainWindow(object):
         if value_use['graph_10'] is not 0:
             print('возможности исчерпаны!')
 
-
     def delete_window_graph_add(self):
         n = 9 - len(names_use)
 
@@ -588,6 +577,25 @@ class Ui_MainWindow(object):
             names_use.insert(0, names_start[n - 1])
             self.menu_graphics.removeTab(n)
             value_use[9] = 0
+
+    def read_text(self, place):
+        return place.toPlainText()
+
+    def set_text_value(self, place, vars):
+        for var in vars:
+            place.append(f"{var} = ")
+
+    def open_excel_fail(self, way):
+        global ecxel_fail
+        ecxel_fail = xls.load_workbook(way)
+
+    def create_dict_for_mis_excel(self, place, dictionary):
+        text = place.toPlainText().replace(' ', '').split('\n')
+        text_new = []
+        for part in text:
+            text_new.append(part.split("="))
+            dictionary = dict(text_new)
+        return dictionary
 
 
 if __name__ == "__main__":
