@@ -1,18 +1,12 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-import openpyxl as xls
+from PyQt5.QtWidgets import QMessageBox
 
 # Здесь объявлю возможные имена для дополнительных графических окон
 names_start = ['график 2', 'график 3', 'график 4', 'график 5', 'график 6', 'график 7', 'график 8', 'график 9', 'график 10']
 names_use = ['график 2', 'график 3', 'график 4', 'график 5', 'график 6', 'график 7', 'график 8', 'график 9', 'график 10']
-value_start = dict(graph_2=0,  graph_3=0,  graph_4=0,  graph_5=0,  graph_6=0,  graph_7=0,  graph_8=0,  graph_9=0, graph_10=0)
 value_use = dict(graph_2=0,  graph_3=0,  graph_4=0,  graph_5=0,  graph_6=0,  graph_7=0,  graph_8=0,  graph_9=0, graph_10=0)
 value_names = ['graph_1', 'graph_2', 'graph_3', 'graph_4', 'graph_5', 'graph_6', 'graph_7', 'graph_8',
                        'graph_9', 'graph_10']
-ecxel_fail = None
-dict_mis_const = {}
-
-
-
 
 class add_graph():
     def __init__(self, name):
@@ -124,8 +118,6 @@ class Ui_MainWindow(object):
         """Воссоединение всего!"""
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         self.add_functions()
-
-
 
     def create_ecxel_fail(self):
         self.ecxel_fail = QtWidgets.QWidget()
@@ -257,22 +249,34 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.point_Y_1.setFont(font)
         self.point_Y_1.setObjectName("point_Y_1")
+
         self.btn_add_graph_1 = QtWidgets.QPushButton(self.graphics_main)
-        self.btn_add_graph_1.setGeometry(QtCore.QRect(200, 560, 261, 71))
+        self.btn_add_graph_1.setGeometry(QtCore.QRect(80, 550, 261, 71))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
         self.btn_add_graph_1.setFont(font)
-        self.btn_add_graph_1.setStyleSheet("background-color: rgb(255, 0, 0);")
+        self.btn_add_graph_1.setStyleSheet("background-color: rgb(230, 230, 0);")
         self.btn_add_graph_1.setObjectName("btn_add_graph_1")
+
+        self.btn_clear_graph = QtWidgets.QPushButton(self.graphics_main)
+        self.btn_clear_graph.setGeometry(QtCore.QRect(660, 550, 261, 71))
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.btn_clear_graph.setFont(font)
+        self.btn_clear_graph.setStyleSheet("background-color: rgb(255, 0, 0);")
+        self.btn_clear_graph.setObjectName("btn_clear_graph")
+
         self.btn_new_graph_1 = QtWidgets.QPushButton(self.graphics_main)
-        self.btn_new_graph_1.setGeometry(QtCore.QRect(540, 560, 261, 71))
+        self.btn_new_graph_1.setGeometry(QtCore.QRect(370, 550, 261, 71))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
         self.btn_new_graph_1.setFont(font)
         self.btn_new_graph_1.setStyleSheet("background-color: rgb(85, 170, 255);")
         self.btn_new_graph_1.setObjectName("btn_new_graph_1")
+
         self.horizontalLayoutWidget_2 = QtWidgets.QWidget(self.graphics_main)
         self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(500, 140, 401, 31))
         self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
@@ -492,6 +496,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.btn_clear_graph.setText(_translate("MainWindow", "Обновить окно!!!"))
         self.label_ex.setText(_translate("MainWindow", "Введите полный путь к Excel файлу,\n"
 "с которым вы собираетесь работать\n"
 "(из этого файла будут считываться данные\n"
@@ -540,14 +545,34 @@ class Ui_MainWindow(object):
         # функция для экселя
         self.btn_ex.clicked.connect(lambda: print('Ok'))
         # функции для погрешностей
-        self.btn_mis_getFormula.clicked.connect(lambda: self.set_text_value(self.text_mistake_const, ['q','w','e','r','t','y']))
-        self.btn_mis_getFigure.clicked.connect(lambda: print(self.create_dict_for_mis_excel(self.text_mistake_const, dict_mis_const)))
-        self.btn_mis_new.clicked.connect(lambda: print(self.read_text(self.formula_mistake_need)))
+        # Вместо ['q','w','e','r','t','y'] НАДО получить списки переменных и констант
+        # Кроме того, эта вець должна вставлять формулу!!! Это ее первостепенная задача
+        """"Это первая часть для погрешностей"""
+        self.btn_mis_getFormula.clicked.connect(lambda: self.set_text_value(self.text_mistake_const,['q','w','e','r','t','y']))
+        """
+        self.btn_mis_getFormula.clicked.connect(lambda: Sonya_function(self.read_text(self.formula_mistake_need),
+                                                                       self.read_text(self.text_mistake_const))
+        self.btn_mis_getFormula.clicked.connect(lambda: self.set_text_value(self.text_mistake_const, Sonya_const)) #['q','w','e','r','t','y']
+        self.btn_mis_getFormula.clicked.connect(lambda: self.set_text_value(self.text_mistake_var_middle, Sonya_var))
+        self.btn_mis_getFormula.clicked.connect(lambda: self.set_text_value(self.text_mistake_var_deviation, Sonya_deviation))
+
+        """"Это вторая часть для погрешностей"""
+        # self.btn_mis_getFigure.clicked.connect(lambda: Sonya_function_2(self.create_dict_for_mis_excel(self.text_mistake_const),
+        #                                                                 self.create_dict_for_mis_excel(self.text_mistake_const),
+        #                                                                 self.create_dict_for_mis_excel(self.text_mistake_const)))
+        self.btn_mis_new.clicked.connect(lambda: self.clear_mis())
         # функции для графиков
+        # создание и удаление дополнительных окон для графиков
         self.btn_add_graph_1.clicked.connect(lambda: self.create_window_graph_add())
         self.btn_new_graph_1.clicked.connect(lambda: self.delete_window_graph_add())
-        self.btn_start_graph_1.clicked.connect(lambda: print('ok'))
+        # Непосредственно анина функция
+        self.btn_start_graph_1.clicked.connect(lambda: print(self.set_params_graph()))
+        # Удаление из главного окна графиков данных
+        self.btn_clear_graph.clicked.connect(lambda : self.clear_graphic())
+        self.btn_clear_graph.clicked.connect(lambda: self.error())
 
+
+# Мое для создания окон в графиках
     def create_window_graph_add(self):
         for key in value_use:
             if value_use[key] == 0:
@@ -577,26 +602,112 @@ class Ui_MainWindow(object):
             names_use.insert(0, names_start[n - 1])
             self.menu_graphics.removeTab(n)
             value_use[9] = 0
-
+# считывание текста напрямую
     def read_text(self, place):
         return place.toPlainText()
-
+# установление красивых стобликов в разделе погрешности
     def set_text_value(self, place, vars):
         for var in vars:
             place.append(f"{var} = ")
 
-    def open_excel_fail(self, way):
-        global ecxel_fail
-        ecxel_fail = xls.load_workbook(way)
-
-    def create_dict_for_mis_excel(self, place, dictionary):
-        text = place.toPlainText().replace(' ', '').split('\n')
+    def create_dict_mis(self, place, text):
+        dictionary = dict()
+        place.append(text)
         text_new = []
         for part in text:
             text_new.append(part.split("="))
             dictionary = dict(text_new)
         return dictionary
+# Функция устанавливает параметры для аниной функции
+    def set_params_graph(self):
+        """Индексация правильная, т.е. индекс о,о,о соответствует данным о первом графике"""
+        list_X = [] # список строк переменных X
+        list_Y = [] # список строк переменныx Y
+        list_formuls = []# список строк формул
+        error = False
+        roots = False
+        extr = False
+        x_label = '' # Подпись к оси Х
+        y_label = '' # Подпись к оси Y
+        title = '' # Главная подпись к графику
 
+        # Проверка чекбоксов на зажантие
+        if self.check_zero_1.isChecked():
+            roots = True
+        if self.check_mistake_1.isChecked():
+            error = True
+        if self.check_extremum_1.isChecked():
+            extr = True
+
+        # Занесение данных со страницы главного графика
+        list_X.append(self.read_text(self.point_X_1))
+        list_Y.append(self.read_text(self.point_Y_1))
+        list_formuls.append(self.read_text(self.formula_graph_need_1))
+        x_label = self.read_text(self.text_graph_label_x)
+        y_label = self.read_text(self.text_graph_label_y)
+        title = self.read_text(self.text_graph_label_g)
+
+
+        # занесение данных с дополнительных графиков
+        for key in value_use:
+            if value_use[key] == 0:
+                break
+            else:
+                list_X.append(value_use[key].point_X.toPlainText())
+                list_Y.append(value_use[key].point_Y.toPlainText())
+                list_formuls.append(value_use[key].formula_graph_need.toPlainText())
+            print('ok')
+        # list_X_need = []
+        #
+        # for vars in list_X:
+        #     vars.split(' ')
+        #     help_vars = vars
+        #     for var in help_vars:
+        #         vars.insert(vars.index(var), int(var))
+        #     list_X_need.append(vars)
+        # print(list_X_need)
+
+
+
+
+        return list_formuls, list_X, list_Y, title, x_label, y_label, error, roots, extr
+
+    def clear_mis(self):
+        _translate = QtCore.QCoreApplication.translate
+        self.formula_mistake_need.clear()
+        self.mistake_name_const.clear()
+        self.formula_mistake.setText(_translate("MainWindow", "Здесь вы получите формулу погрешности"))
+        self.number_mistake.setText(_translate("MainWindow", "Здесь вы получите числовое значение"))
+        self.text_mistake_const.clear()
+        self.text_mistake_var_middle.clear()
+        self.text_mistake_var_deviation.clear()
+
+    def clear_graphic(self):
+        _translate = QtCore.QCoreApplication.translate
+        self.formula_graph_need_1.clear()
+        self.point_X_1.clear()
+        self.point_Y_1.clear()
+        self.text_graph_label_x.clear()
+        self.text_graph_label_g.clear()
+        self.text_graph_label_y.clear()
+        self.formula_graph_1.setText(_translate("MainWindow", "Формула для вашего графика:"))
+        self.check_zero_1.setChecked(False)
+        self.check_mistake_1.setChecked(False)
+        self.check_extremum_1.setChecked(False)
+
+    def error(self):
+        error = QMessageBox()
+        error.setWindowTitle("ошибка")
+        error.setText("cейчас это действие выполнить нельзя")
+        error.setIcon(QMessageBox.Warning)
+        error.setStandardButtons(QMessageBox.Ok)
+
+        error.setDefaultButton(QMessageBox.Ok)
+        error.setInformativeText("два раза действие не выполнить")
+        error.setDetailedText("детали")
+
+        # error.buttonClicked.connect(self.popup_action)
+        error.exec_()
 
 if __name__ == "__main__":
     import sys
