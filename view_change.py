@@ -1,6 +1,9 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 
+import Function_Plotting_Graph
+
+
 # Здесь объявлю возможные имена для дополнительных графических окон
 names_start = ['график 2', 'график 3', 'график 4', 'график 5', 'график 6', 'график 7', 'график 8', 'график 9', 'график 10']
 names_use = ['график 2', 'график 3', 'график 4', 'график 5', 'график 6', 'график 7', 'график 8', 'график 9', 'график 10']
@@ -568,6 +571,7 @@ class Ui_MainWindow(object):
         self.btn_new_graph_1.clicked.connect(lambda: self.delete_window_graph_add())
         # Непосредственно анина функция
         self.btn_start_graph_1.clicked.connect(lambda: print(self.set_params_graph()))
+        self.btn_start_graph_1.clicked.connect(lambda: self.Ann_function_final())
         # Удаление из главного окна графиков данных
         self.btn_clear_graph.clicked.connect(lambda : self.clear_graphic())
         self.btn_clear_graph.clicked.connect(lambda: self.error())
@@ -657,7 +661,6 @@ class Ui_MainWindow(object):
                 list_X.append(value_use[key].point_X.toPlainText())
                 list_Y.append(value_use[key].point_Y.toPlainText())
                 list_formuls.append(value_use[key].formula_graph_need.toPlainText())
-            print('ok')
 
         return list_formuls, list_X, list_Y, title, x_label, y_label, error, roots, extr
 
@@ -697,6 +700,21 @@ class Ui_MainWindow(object):
 
         # error.buttonClicked.connect(self.popup_action)
         error.exec_()
+
+    def Ann_function_final(self):
+        a = Function_Plotting_Graph.plotting_graph(self.set_params_graph()[0],
+                                                   self.set_params_graph()[1],
+                                                   self.set_params_graph()[2],
+                                                   self.set_params_graph()[3],
+                                                   self.set_params_graph()[4],
+                                                   self.set_params_graph()[5],
+                                                   self.set_params_graph()[6],
+                                                   self.set_params_graph()[7],
+                                                   self.set_params_graph()[8])
+        if not a:
+            self.error()
+
+
 
 if __name__ == "__main__":
     import sys
