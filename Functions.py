@@ -144,9 +144,9 @@ def plotting(formula, xdata, ydata, popt, pcov, title, x_label, y_label, error, 
         for j in range(len(coeffs)):
             s += str(coeffs[j]) + ' = ' + str(popt[i][j]) + '\n'
         c = np.random.rand(3,)
-        a.plot(xdata[i], ydata[i], 'o', color=c, label='Экспериментальные данные_' + str(i+1))
+        a.plot(xdata[i], ydata[i], 'o', color=c)
         xdata_1 = np.linspace(np.min(xdata[i]), np.max(xdata[i]), 100)
-        a.plot(xdata_1, func(xdata_1, *popt[i]), '-', color=c, label=s)
+        a.plot(xdata_1, func(xdata_1, *popt[i]), '-', color=c)
 
     formula = "y(x) = " + "$" + formula + "$"
     a.legend(loc='upper left', shadow=True, title=formula)

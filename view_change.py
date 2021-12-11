@@ -549,6 +549,7 @@ class Ui_MainWindow(object):
         # Кроме того, эта вець должна вставлять формулу!!! Это ее первостепенная задача
         """"Это первая часть для погрешностей"""
         self.btn_mis_getFormula.clicked.connect(lambda: self.set_text_value(self.text_mistake_const,['q','w','e','r','t','y']))
+        self.btn_mis_getFormula.clicked.connect(lambda: self.error())
         """
         self.btn_mis_getFormula.clicked.connect(lambda: Sonya_function(self.read_text(self.formula_mistake_need),
                                                                        self.read_text(self.text_mistake_const))
@@ -657,18 +658,6 @@ class Ui_MainWindow(object):
                 list_Y.append(value_use[key].point_Y.toPlainText())
                 list_formuls.append(value_use[key].formula_graph_need.toPlainText())
             print('ok')
-        # list_X_need = []
-        #
-        # for vars in list_X:
-        #     vars.split(' ')
-        #     help_vars = vars
-        #     for var in help_vars:
-        #         vars.insert(vars.index(var), int(var))
-        #     list_X_need.append(vars)
-        # print(list_X_need)
-
-
-
 
         return list_formuls, list_X, list_Y, title, x_label, y_label, error, roots, extr
 

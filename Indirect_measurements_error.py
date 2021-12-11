@@ -11,7 +11,8 @@ transformations = (standard_transformations + (implicit_multiplication_applicati
 
 '''Передаем функцию в виде строки'''
 #str_func = "sin(x) * cos(y) * tan(z)"
-str_func = "x / y"
+#str_func = "x / y"
+str_func = "M/m*(g/L)**(1/2)*x"
 
 '''Передаем список констант'''
 constants = []
