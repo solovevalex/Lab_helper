@@ -1,86 +1,72 @@
 import sympy as sym
 from sympy.parsing.sympy_parser import parse_expr
 from sympy.parsing.sympy_parser import standard_transformations, implicit_multiplication_application
+'''
++ Добавить check на ошибки в веденной формуле
+'''
+
 
 transformations = (standard_transformations + (implicit_multiplication_application,))
 
+'''exp_value -- считает значение функции, полученной в виде строки.
+Передаются значения:
+    str_exp -- введенное выражение;
+    values -- словарь значений.
+Возвращаются:
+    value -- значение выражения при введенных переменных.
 '''
-Получена формула для косвенной погрешности на основании введенной строки-формулы. Требуется добавить:
-1) Относительная погрешность
-2) Latex'овский синтаксис
-+ 3) Обернуть введенную формулу в функцию
-+ 4) Обернуть полученную формулу для косвенной погрешности в функцию
-5) Добавить check на ошибки в веденной формуле
-'''
-
-'''Передаем функцию в виде строки'''
-#str_func = "sin(x) * cos(y) * tan(z)"
-str_func = "x * y"
-
-'''Передаем список констант'''
-constants = []
-
-'''создаем выражение из нашей строки'''
-func = parse_expr(str_func, transformations=transformations)
-
-'''Создаем список из переменных, найденных в выражении'''
-func_variables = list(func.free_symbols)
-
-'''Список переменных в виде строк'''
-str_func_variables = []
-
-'''Будущий словарик строка-переменная (заполняется в цикле)'''
-str_to_var = {}
-
-for i in range(len(func_variables)):
-    '''Создание словарика'''
-    str_to_var[str(func_variables[i])]= func_variables[i]
-    '''Говорим питону, какие переменные обозначаются такими-то символами (нужно для диффиринциирования)'''
-    func_variables[i] = sym.Symbol(str(func_variables[i]))
-    '''Пополняем список строчко-переменных'''
-    str_func_variables.append(str(func_variables[i]))
-
-'''Создаем список элементов, которые не являются константами'''
-str_var_only = [x for x in str_func_variables if x not in constants]
-
-
-str_diff_func_user = ""
-str_diff_func_calc = ""
-diff_list = []
-'''Создаем строку с итоговые дифференциалом'''
-for i in range(len(str_var_only)):
-    #Временно значения дифференциалов обозначила как d'значение переменной'
-    diff_user ="(" + str(sym.diff(func, str_to_var[str_var_only[i]])) + " * d" + str_var_only[i] + ")**2"
-    diff_list.append("d" + str_var_only[i])
-    diff_calc ="(" + str(sym.diff(func, str_to_var[str_var_only[i]])) + str_var_only[i].upper() + ")**2"
-    str_diff_func_user += diff_user
-    str_diff_func_calc += diff_calc
-    if i < len(str_var_only)-1:
-        str_diff_func_user += " + "
-        str_diff_func_calc += " + "
-
-str_error_func_user = "sqrt(" + str_diff_func_user + ")"
-str_error_func_calc = "sqrt(" + str_diff_func_calc + ")"
-print("Выражение для подсчета косвенной погрешности заданной величины:")
-print(str_error_func_user)
-
-error_func = parse_expr(str_error_func_calc, transformations=transformations)
-
-
-
-'''!!! Для Саши'''
-'''constants -- список констант (совпадает с тем, что ты передаешь мне в начале)'''
-print(constants)
-'''str_var_only -- список средних значений переменных'''
-print(str_var_only)
-'''diff_list = список дифференциалов'''
-print(diff_list)
-
-'''
-func_val считает значение переданного выражения.
-function -- функция;
-values -- словарик значений.
-'''
-def func_val(function, values):
-    value = function.subs(values).evalf()
+def exp_value(str_exp, values):
+    exp = parse_expr(str_exp, transformations=transformations)
+    for i in range(len(values)):
+        values[i] = sym.Symbol(str(values[i]))
+    value = exp.evalf(subs=values)
     return value
+
+
+'''get_error_func -- на основе выражения-строки и списка констант считает формулу для косвенной погрешности измерения.
+Передаются значения:
+    str_exp -- введенное выражение;
+    constants -- список констант.
+Возвращаются:
+    str_error_func_user -- формула косвенной погрешности, для пользователя;
+    str_var_only -- список из переменных (их средние значения);
+    diff_list_user -- список дифференциалов, для пользователя;
+    str_error_func_calc -- формула косвенной погрешности, для рассчетов;
+    diff_list_calc -- список дифференциалов, для рассчетов.
+'''
+def get_error_func(str_exp, constants):
+    exp = parse_expr(str_exp, transformations=transformations)
+    exp_variables = list(exp.free_symbols)
+    str_exp_variables = []
+    str_to_var = {}
+    for i in range(len(exp_variables)):
+        str_to_var[str(exp_variables[i])] = exp_variables[i]
+        exp_variables[i] = sym.Symbol(str(exp_variables[i]))
+        str_exp_variables.append(str(exp_variables[i]))
+    str_var_only = [x for x in str_exp_variables if x not in constants]
+    str_diff_func_user = ""
+    str_diff_func_calc = ""
+    diff_list_user = []
+    diff_list_calc = []
+    for i in range(len(str_var_only)):
+        diff_user = "(" + str(sym.diff(exp, str_to_var[str_var_only[i]])) + " * d" + str_var_only[i] + ")**2"
+        diff_list_user.append("d" + str_var_only[i])
+        diff_calc = "(" + str(sym.diff(exp, str_to_var[str_var_only[i]]))+ " * " + str_var_only[i].upper() + ")**2"
+        diff_list_calc.append(str_var_only[i].upper())
+        str_diff_func_user += diff_user
+        str_diff_func_calc += diff_calc
+        if i < len(str_var_only) - 1:
+            str_diff_func_user += " + "
+            str_diff_func_calc += " + "
+    str_error_func_user = "sqrt(" + str_diff_func_user + ")"
+    str_error_func_calc = "sqrt(" + str_diff_func_calc + ")"
+    return str_error_func_user, str_var_only, diff_list_user, str_error_func_calc, diff_list_calc
+
+'''
+Всякие проверки
+
+my_str = "x * y"
+str_error_func_user, str_var_only, diff_list, str_error_func_calc = get_error_func(my_str,[])
+print(str_error_func_calc)
+exp_value(my_str, {x:5, y:4})
+'''
