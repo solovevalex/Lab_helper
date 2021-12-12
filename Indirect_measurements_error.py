@@ -17,9 +17,12 @@ transformations = (standard_transformations + (implicit_multiplication_applicati
 '''
 def exp_value(str_exp, values):
     exp = parse_expr(str_exp, transformations=transformations)
-    for i in range(len(values)):
-        values[i] = sym.Symbol(str(values[i]))
-    value = exp.evalf(subs=values)
+    exp_variables = list(exp.free_symbols)
+    values_ = {}
+    for i in range(len(exp_variables)):
+        exp_variables[i] = sym.Symbol(str(exp_variables[i]))
+        values_[exp_variables[i]] = values[str(exp_variables[i])]
+    value = exp.evalf(subs=values_)
     return value
 
 
@@ -66,7 +69,7 @@ def get_error_func(str_exp, constants):
 Всякие проверки
 
 my_str = "x * y"
-str_error_func_user, str_var_only, diff_list, str_error_func_calc = get_error_func(my_str,[])
+str_error_func_user, str_var_only, diff_list_user, str_error_func_calc, diff_list_calc = get_error_func(my_str,[])
 print(str_error_func_calc)
-exp_value(my_str, {x:5, y:4})
+print(exp_value(my_str, {'x':5, 'y':4}))
 '''
