@@ -1,15 +1,19 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 
-import Function_Plotting_Graph
-
+import Function_Plotting_Graph as ann_func
+import Indirect_measurements_error as sonya_func
 
 # Здесь объявлю возможные имена для дополнительных графических окон
-names_start = ['график 2', 'график 3', 'график 4', 'график 5', 'график 6', 'график 7', 'график 8', 'график 9', 'график 10']
-names_use = ['график 2', 'график 3', 'график 4', 'график 5', 'график 6', 'график 7', 'график 8', 'график 9', 'график 10']
-value_use = dict(graph_2=0,  graph_3=0,  graph_4=0,  graph_5=0,  graph_6=0,  graph_7=0,  graph_8=0,  graph_9=0, graph_10=0)
+names_start = ['график 2', 'график 3', 'график 4', 'график 5', 'график 6', 'график 7', 'график 8', 'график 9',
+               'график 10']
+names_use = ['график 2', 'график 3', 'график 4', 'график 5', 'график 6', 'график 7', 'график 8', 'график 9',
+             'график 10']
+value_use = dict(graph_2=0, graph_3=0, graph_4=0, graph_5=0, graph_6=0, graph_7=0, graph_8=0, graph_9=0, graph_10=0)
 value_names = ['graph_1', 'graph_2', 'graph_3', 'graph_4', 'graph_5', 'graph_6', 'graph_7', 'graph_8',
-                       'graph_9', 'graph_10']
+               'graph_9', 'graph_10']
+str_exp = ""
+
 
 class add_graph():
     def __init__(self, name):
@@ -228,7 +232,7 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.btn_start_graph_1.setFont(font)
         self.btn_start_graph_1.setStyleSheet("background-color: rgb(85, 0, 255);\n"
-"background-color: rgb(170, 170, 255);")
+                                             "background-color: rgb(170, 170, 255);")
         self.btn_start_graph_1.setObjectName("btn_start_graph_1")
         self.formula_graph_need_1 = QtWidgets.QTextEdit(self.graphics_main)
         self.formula_graph_need_1.setGeometry(QtCore.QRect(100, 40, 801, 87))
@@ -292,7 +296,7 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.label_graph_paint_1.setFont(font)
         self.label_graph_paint_1.setStyleSheet("background-color: rgb(170, 170, 255);\n"
-"background-color: rgb(170, 85, 255);")
+                                               "background-color: rgb(170, 85, 255);")
         self.label_graph_paint_1.setObjectName("label_graph_paint_1")
         self.horisontalCorrect_lbl_gr.addWidget(self.label_graph_paint_1)
         self.label_graph_paint_2 = QtWidgets.QLabel(self.horizontalLayoutWidget_2)
@@ -475,7 +479,7 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.btn_mis_new.setFont(font)
         self.btn_mis_new.setStyleSheet("\n"
-"background-color: rgb(255, 85, 0);")
+                                       "background-color: rgb(255, 85, 0);")
         self.btn_mis_new.setObjectName("btn_mis_new")
         self.menu.addTab(self.mistakes, "")
 
@@ -501,9 +505,9 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.btn_clear_graph.setText(_translate("MainWindow", "Обновить окно!!!"))
         self.label_ex.setText(_translate("MainWindow", "Введите полный путь к Excel файлу,\n"
-"с которым вы собираетесь работать\n"
-"(из этого файла будут считываться данные\n"
-"указанные через индексы)"))
+                                                       "с которым вы собираетесь работать\n"
+                                                       "(из этого файла будут считываться данные\n"
+                                                       "указанные через индексы)"))
         self.btn_ex.setText(_translate("MainWindow", "Работать с этим файлом!"))
         self.menu.setTabText(self.menu.indexOf(self.ecxel_fail), _translate("MainWindow", "Выбор excel файла"))
         self.label_graph_high_1.setText(_translate("MainWindow", "введите формулу для графика:"))
@@ -518,20 +522,20 @@ class Ui_MainWindow(object):
         self.label_graph_high_4.setText(_translate("MainWindow", "добавьте галочки, если нужно"))
         self.btn_start_graph_1.setText(_translate("MainWindow", "Получить график!"))
         self.btn_add_graph_1.setText(_translate("MainWindow", "хочу добавить график\n"
-"в те же координатные оси"))
+                                                              "в те же координатные оси"))
         self.btn_new_graph_1.setText(_translate("MainWindow", "удалить последнее окно с графиком"))
         self.label_graph_paint_1.setText(_translate("MainWindow", "подпись к графику"))
         self.label_graph_paint_2.setText(_translate("MainWindow", "  подись к оси x"))
         self.label_graph_paint_3.setText(_translate("MainWindow", "  подпись к оси y"))
-        self.menu_graphics.setTabText(self.menu_graphics.indexOf(self.graphics_main), _translate("MainWindow", "главный график"))
-
+        self.menu_graphics.setTabText(self.menu_graphics.indexOf(self.graphics_main),
+                                      _translate("MainWindow", "главный график"))
 
         self.menu.setTabText(self.menu.indexOf(self.graphics), _translate("MainWindow", "графики"))
         self.label_mis_high_1.setText(_translate("MainWindow", "введите формулу для величины, \n"
-"погрешность которой вы хотите посчитать"))
+                                                               "погрешность которой вы хотите посчитать"))
         self.label_mis_high_2.setText(_translate("MainWindow", "укажите, какие буквы являются константой"))
         self.label_mis_high_5.setText(_translate("MainWindow", "если хотите получить числовое значение,\n"
-"введите числовые значения переменных и констант"))
+                                                               "введите числовые значения переменных и констант"))
         self.number_mistake.setText(_translate("MainWindow", "Здесь вы получите числовое значение:"))
         self.label_small_1.setText(_translate("MainWindow", "значение констант"))
         self.label_small_2.setText(_translate("MainWindow", "среднее переменной"))
@@ -544,6 +548,7 @@ class Ui_MainWindow(object):
         self.menu_btn.setTitle(_translate("MainWindow", "Справка"))
 
     """Долгожданные функции)))"""
+
     def add_functions(self):
         # функция для экселя
         self.btn_ex.clicked.connect(lambda: print('Ok'))
@@ -551,7 +556,7 @@ class Ui_MainWindow(object):
         # Вместо ['q','w','e','r','t','y'] НАДО получить списки переменных и констант
         # Кроме того, эта вець должна вставлять формулу!!! Это ее первостепенная задача
         """"Это первая часть для погрешностей"""
-        self.btn_mis_getFormula.clicked.connect(lambda: self.set_text_value(self.text_mistake_const,['q','w','e','r','t','y']))
+        self.btn_mis_getFormula.clicked.connect(lambda: self.sonya_func_get_formula_mis())
         self.btn_mis_getFormula.clicked.connect(lambda: self.error())
         """
         self.btn_mis_getFormula.clicked.connect(lambda: Sonya_function(self.read_text(self.formula_mistake_need),
@@ -561,9 +566,7 @@ class Ui_MainWindow(object):
         self.btn_mis_getFormula.clicked.connect(lambda: self.set_text_value(self.text_mistake_var_deviation, Sonya_deviation))
 
         """"Это вторая часть для погрешностей"""
-        # self.btn_mis_getFigure.clicked.connect(lambda: Sonya_function_2(self.create_dict_for_mis_excel(self.text_mistake_const),
-        #                                                                 self.create_dict_for_mis_excel(self.text_mistake_const),
-        #                                                                 self.create_dict_for_mis_excel(self.text_mistake_const)))
+        self.btn_mis_getFigure.clicked.connect(lambda: self.sonya_func_get_figure())
         self.btn_mis_new.clicked.connect(lambda: self.clear_mis())
         # функции для графиков
         # создание и удаление дополнительных окон для графиков
@@ -573,18 +576,18 @@ class Ui_MainWindow(object):
         self.btn_start_graph_1.clicked.connect(lambda: print(self.set_params_graph()))
         self.btn_start_graph_1.clicked.connect(lambda: self.Ann_function_final())
         # Удаление из главного окна графиков данных
-        self.btn_clear_graph.clicked.connect(lambda : self.clear_graphic())
+        self.btn_clear_graph.clicked.connect(lambda: self.clear_graphic())
         self.btn_clear_graph.clicked.connect(lambda: self.error())
 
-
-# Мое для создания окон в графиках
+    # Мое для создания окон в графиках
     def create_window_graph_add(self):
         for key in value_use:
             if value_use[key] == 0:
                 value_use[key] = add_graph(key)
-                self.menu_graphics.addTab(value_use[key].graph,"")
+                self.menu_graphics.addTab(value_use[key].graph, "")
                 _translate = QtCore.QCoreApplication.translate
-                self.menu_graphics.setTabText(self.menu_graphics.indexOf(value_use[key].graph), _translate("MainWindow", names_use[0]))
+                self.menu_graphics.setTabText(self.menu_graphics.indexOf(value_use[key].graph),
+                                              _translate("MainWindow", names_use[0]))
                 self.menu.setTabText(self.menu.indexOf(self.graphics), _translate("MainWindow", "графики"))
                 names_use.pop(0)
                 self.menu.setCurrentIndex(2)
@@ -607,34 +610,28 @@ class Ui_MainWindow(object):
             names_use.insert(0, names_start[n - 1])
             self.menu_graphics.removeTab(n)
             value_use[9] = 0
-# считывание текста напрямую
+
+    # считывание текста напрямую
     def read_text(self, place):
         return place.toPlainText()
-# установление красивых стобликов в разделе погрешности
+
+    # установление красивых стобликов в разделе погрешности
     def set_text_value(self, place, vars):
         for var in vars:
             place.append(f"{var} = ")
 
-    def create_dict_mis(self, place, text):
-        dictionary = dict()
-        place.append(text)
-        text_new = []
-        for part in text:
-            text_new.append(part.split("="))
-            dictionary = dict(text_new)
-        return dictionary
-# Функция устанавливает параметры для аниной функции
+    # Функция устанавливает параметры для аниной функции
     def set_params_graph(self):
         """Индексация правильная, т.е. индекс о,о,о соответствует данным о первом графике"""
-        list_X = [] # список строк переменных X
-        list_Y = [] # список строк переменныx Y
-        list_formuls = []# список строк формул
+        list_X = []  # список строк переменных X
+        list_Y = []  # список строк переменныx Y
+        list_formuls = []  # список строк формул
         error = False
         roots = False
         extr = False
-        x_label = '' # Подпись к оси Х
-        y_label = '' # Подпись к оси Y
-        title = '' # Главная подпись к графику
+        x_label = ''  # Подпись к оси Х
+        y_label = ''  # Подпись к оси Y
+        title = ''  # Главная подпись к графику
 
         # Проверка чекбоксов на зажантие
         if self.check_zero_1.isChecked():
@@ -651,7 +648,6 @@ class Ui_MainWindow(object):
         x_label = self.read_text(self.text_graph_label_x)
         y_label = self.read_text(self.text_graph_label_y)
         title = self.read_text(self.text_graph_label_g)
-
 
         # занесение данных с дополнительных графиков
         for key in value_use:
@@ -702,22 +698,71 @@ class Ui_MainWindow(object):
         error.exec_()
 
     def Ann_function_final(self):
-        a = Function_Plotting_Graph.plotting_graph(self.set_params_graph()[0],
-                                                   self.set_params_graph()[1],
-                                                   self.set_params_graph()[2],
-                                                   self.set_params_graph()[3],
-                                                   self.set_params_graph()[4],
-                                                   self.set_params_graph()[5],
-                                                   self.set_params_graph()[6],
-                                                   self.set_params_graph()[7],
-                                                   self.set_params_graph()[8])
+        a = ann_func.plotting_graph(self.set_params_graph()[0],
+                                    self.set_params_graph()[1],
+                                    self.set_params_graph()[2],
+                                    self.set_params_graph()[3],
+                                    self.set_params_graph()[4],
+                                    self.set_params_graph()[5],
+                                    self.set_params_graph()[6],
+                                    self.set_params_graph()[7],
+                                    self.set_params_graph()[8])
         if not a:
             self.error()
+
+    def list_making(self, place):
+        place.split(' ')
+        return place
+
+    def sonya_func_get_formula_mis(self):
+        list_const = (list(self.list_making(self.mistake_name_const.toPlainText())))
+        str_formula = (self.formula_mistake_need.toPlainText())
+        sonya_results = sonya_func.get_error_func(str_formula, list_const)
+        self.set_text_value(self.text_mistake_const, list_const)
+        self.set_text_value(self.text_mistake_var_middle, sonya_results[1])
+        self.set_text_value(self.text_mistake_var_deviation, sonya_results[2])
+        self.formula_mistake.setText(sonya_results[0])
+
+    def create_dict_mis(self, text):
+        try:
+            text = text.split("\n")
+            list_need = []
+            for part in text:
+                part = part.replace(' ', '')
+
+                part = part.split('=')
+
+                part[1] = float(part[1])
+
+                list_need.append(part)
+
+            dictionary = dict(list_need)
+            return dictionary
+        except BaseException:
+            return 'qwerty'
+
+    def sonya_func_get_figure(self):
+        dict = self.create_dict_mis(self.text_mistake_const.toPlainText())
+        dict_1 = self.create_dict_mis(self.text_mistake_var_deviation.toPlainText())
+        dict_2 = self.create_dict_mis(self.text_mistake_var_middle.toPlainText())
+
+        if dict == 'qwerty' or dict_1 == 'qwerty' or dict_2 == 'qwerty':
+            self.error()
+            pass
+        else:
+            dict.update(dict_1)
+            dict.update(dict_2)
+
+            print(dict)
+            figure = sonya_func.exp_value(self.formula_mistake_need.toPlainText(), dict)
+            print('ok')
+            self.number_mistake.setText(f'{figure}')
 
 
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
