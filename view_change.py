@@ -109,7 +109,7 @@ class Ui_MainWindow(object):
         """Создание всего..."""
         self.create_main()
         self.create_menu_Bar()
-        self.create_ecxel_fail()
+        #self.create_ecxel_fail()
         self.create_mis()
         self.create_graphics()
 
@@ -504,12 +504,12 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.btn_clear_graph.setText(_translate("MainWindow", "Обновить окно!!!"))
-        self.label_ex.setText(_translate("MainWindow", "Введите полный путь к Excel файлу,\n"
-                                                       "с которым вы собираетесь работать\n"
-                                                       "(из этого файла будут считываться данные\n"
-                                                       "указанные через индексы)"))
-        self.btn_ex.setText(_translate("MainWindow", "Работать с этим файлом!"))
-        self.menu.setTabText(self.menu.indexOf(self.ecxel_fail), _translate("MainWindow", "Выбор excel файла"))
+        # self.label_ex.setText(_translate("MainWindow", "Введите полный путь к Excel файлу,\n"
+        #                                                "с которым вы собираетесь работать\n"
+        #                                                "(из этого файла будут считываться данные\n"
+        #                                                "указанные через индексы)"))
+        # self.btn_ex.setText(_translate("MainWindow", "Работать с этим файлом!"))
+        # self.menu.setTabText(self.menu.indexOf(self.ecxel_fail), _translate("MainWindow", "Выбор excel файла"))
         self.label_graph_high_1.setText(_translate("MainWindow", "введите формулу для графика:"))
         self.label_graphics_high_3.setText(_translate("MainWindow", "введите данные(точки графика):"))
         self.label_graph_X_1.setText(_translate("MainWindow", "x"))
@@ -550,21 +550,12 @@ class Ui_MainWindow(object):
     """Долгожданные функции)))"""
 
     def add_functions(self):
-        # функция для экселя
-        self.btn_ex.clicked.connect(lambda: print('Ok'))
+
         # функции для погрешностей
         # Вместо ['q','w','e','r','t','y'] НАДО получить списки переменных и констант
         # Кроме того, эта вець должна вставлять формулу!!! Это ее первостепенная задача
         """"Это первая часть для погрешностей"""
         self.btn_mis_getFormula.clicked.connect(lambda: self.sonya_func_get_formula_mis())
-        self.btn_mis_getFormula.clicked.connect(lambda: self.error())
-        """
-        self.btn_mis_getFormula.clicked.connect(lambda: Sonya_function(self.read_text(self.formula_mistake_need),
-                                                                       self.read_text(self.text_mistake_const))
-        self.btn_mis_getFormula.clicked.connect(lambda: self.set_text_value(self.text_mistake_const, Sonya_const)) #['q','w','e','r','t','y']
-        self.btn_mis_getFormula.clicked.connect(lambda: self.set_text_value(self.text_mistake_var_middle, Sonya_var))
-        self.btn_mis_getFormula.clicked.connect(lambda: self.set_text_value(self.text_mistake_var_deviation, Sonya_deviation))
-
         """"Это вторая часть для погрешностей"""
         self.btn_mis_getFigure.clicked.connect(lambda: self.sonya_func_get_figure())
         self.btn_mis_new.clicked.connect(lambda: self.clear_mis())
@@ -577,7 +568,6 @@ class Ui_MainWindow(object):
         self.btn_start_graph_1.clicked.connect(lambda: self.Ann_function_final())
         # Удаление из главного окна графиков данных
         self.btn_clear_graph.clicked.connect(lambda: self.clear_graphic())
-        self.btn_clear_graph.clicked.connect(lambda: self.error())
 
     # Мое для создания окон в графиках
     def create_window_graph_add(self):
