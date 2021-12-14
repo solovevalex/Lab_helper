@@ -270,7 +270,7 @@ def plotting(formulas, xdata, ydata, popt, pcov, title, x_label, y_label, error,
     for i in range(len(xdata)):
         formula = "y(x) = " + "$" + formulas[i] + "$"
         s = str(i+1) + ') ' + str(formula) + ", "
-        for j in range(len(coeffs_1)):
+        for j in range(len(coeffs_1[i])):
             s += str(coeffs_1[i][j]) + ' = ' + str(popt[i][j]) + '\n'
         c = np.random.rand(3,)
         a.plot(xdata[i], ydata[i], 'o', color=c)
