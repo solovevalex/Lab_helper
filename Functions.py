@@ -1,15 +1,27 @@
+from tkinter import Tk, Text
 import matplotlib
 import numpy as np
+import sympy as sym
 from scipy.optimize import curve_fit
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-from tkinter import *
-from sympy import*
+from sympy import lambdify, symbols, Symbol, SympifyError, parse_expr
 from sympy.parsing.latex import parse_latex
 matplotlib.use('TkAgg')
 
 
 def check_types(formulas, x, y, error, roots, extr):
+    '''
+    Проверяет соответствие типов входных данных ожидаемым
+    Данные, введённые пользователем:
+    :param formulas: формулы y(x) = ... ['formula_1', 'formula_2', ...]
+    :param x: список значений x для N графиков [[x1, x2], [x1', x2'], ...]
+    :param y: список значений y для N графиков [[y1, y2], [y1', y2'], ...]
+    :param error: нужны ли погрешности
+    :param roots: нужны ли нули функции
+    :param extr: нужны ли экстремумы функции
+    :return: check_1: bool (check_1 == True, если все данные имеют верный тип, иначе check_1 == False)
+    '''
     check_1 = True
     if type(error) is not bool or type(roots) is not bool or type(extr) is not bool:
         check_1 = False
@@ -29,22 +41,35 @@ def check_types(formulas, x, y, error, roots, extr):
         check_1 = False
     return check_1
 
-# функция
-
 def factory(i):
+    '''
+    Создаёт функцию по i-й формуле из formulas с соответствующими коэффициентам из coeffs_1
+    :param i: номер формулы
+    :return: f: func
+    '''
     def f(x_0, *coeffs_0):
         f = lambdify([x] + coeffs_1[i], formulas_1[i])
         return f(x_0, *coeffs_0)
     return f
 
 def generate_functions(N):
+    '''
+    Создаёт N функция с помощью factory
+    :param N: число функций
+    :return: functions: list of funcs
+    '''
     functions = []
     for i in range(N):
         functions.append(factory(i))
     return functions
 
-# парсинг формулы и поиск коэффициентов
 def parse(formulas):
+    '''
+    Осуществлет парсинг формул, введённых пользователем
+    :param formulas: список формул в формате LateX
+    :return: formulas_1: список формул после парсинга,
+             coeffs_1: коэффициенты в формулах (в символьном виде)
+    '''
     global coeffs_1
     global x
     global formulas_1
@@ -52,7 +77,12 @@ def parse(formulas):
     formulas_1 = []
     coeffs_1 = []
     for f in formulas:
-        f_1 = parse_latex(f)
+        try:
+            sym.expand(f)
+        except SympifyError:
+            f_1 = parse_latex(f)
+        else:
+            f_1 = parse_expr(f)
         formulas_1.append(f_1)
         variables_1 = f_1.atoms(Symbol)
         coeffs = []
@@ -60,19 +90,37 @@ def parse(formulas):
             if v != x:
                 coeffs.append(v)
         coeffs_1.append(coeffs)
-    print(formulas_1, coeffs_1)
     return formulas_1, coeffs_1
 
-# очистка данных от знаков препинания, преобразования их массивы np.arrays
 def data_preparing(x, y):
+    '''
+    Приводит данные к формату np.array
+    :param x: список значений x для N графиков [[x1, x2], [x1', x2'], ...]
+    :param y: список значений y для N графиков [[y1, y2], [y1', y2'], ...]
+    :return: x: np.array , y: np.array,
+             check_3: bool (check_3 == True, если данные удалось преобразовать в np.arrays, иначе: check_3 == False)
+    '''
+    check_3 = True
     for i in range(len(x)):
         x[i] = x[i].replace(',', '.').split()
         y[i] = y[i].replace(',', '.').split()
-        x[i] = np.array(x[i], dtype='float64')
-        y[i] = np.array(y[i], dtype='float64')
-    return x, y
+        try:
+            x[i] = np.array(x[i], dtype='float64')
+        except ValueError:
+            check_3 = False
+        try:
+            y[i] = np.array(y[i], dtype='float64')
+        except ValueError:
+            check_3 = False
+    return x, y, check_3
 
 def rounding(popt, sigma):
+    '''
+    Округляет коэффициенты, вычисленные с помощью curve_fit, с учётом погрешностей
+    :param popt: коэффициенты, вычисленные с помощью curve_fit
+    :param sigma: погрешности коэффициентов
+    :return: popt: коэффициенты, округлённые с учётом погрешностей, sigma: погрешности, округлённые до первой значащей цифры
+    '''
     for i in range(len(popt)):
         for j in range(len(sigma[i])):
             n = sigma[i][j]
@@ -87,8 +135,16 @@ def rounding(popt, sigma):
                 popt[i][j] = '%1.5e' % round(popt[i][j], -int(s[-1]))
     return popt, sigma
 
-# поиск коэффициентов МНК
 def approximation(xdata, ydata, coeffs_1):
+    '''
+    Аппроксимация данных с помощью МНК методом curve_fit
+    :param xdata: список значений x для N графиков [[x1, x2], [x1', x2'], ...]
+    :param ydata: список значений y для N графиков [[y1, y2], [y1', y2'], ...]
+    :param coeffs_1: коэффициенты для аппроксимирующей функции в символьном виде
+    :return: popt: коэффициенты, вычисленные с помощью curve_fit,
+             pcov: ковариационная матрица,
+             check_2: bool (check_2 == True, если удалось аппроксимировать данные, иначе check_2 == False)
+    '''
     check_2 = True
     popt = []
     pcov = []
@@ -101,18 +157,22 @@ def approximation(xdata, ydata, coeffs_1):
         else:
             popt.append(Popt)
             pcov.append(Pcov)
-    print(popt, pcov)
     return popt, pcov, check_2
 
-# поиск нулей функции
 def find_roots(func, xdata, coeffs, a):
+    '''
+    Осуществляет поиск нулей функции (точек пересечения графика с осью абсцисс)
+    :param func: исследуемая функция
+    :param xdata: список значений x для N графиков [[x1, x2], [x1', x2'], ...]
+    :param coeffs: коэффициенты для функции, вычисленные с помощью МНК
+    :param a: холст с графиком (фигура окна Tkinter)
+    :return: roots: список корней, округлённых до 5-го знака после запятой
+    '''
     f = func(x, *coeffs)
-
     def f_deriv(a):
         d1 = f.diff(x, 1)
         d2 = lambdify(x, d1)
         return d2(a)
-
     def find_root(func, f_deriv, x_0, max_steps=30, delta=0.001):
         x_old = x_0
         for i in range(max_steps):
@@ -124,7 +184,6 @@ def find_roots(func, xdata, coeffs, a):
                 break
             x_old = x_new
         return x_new
-
     roots = []
     for i in range(10):
         min, max = np.min(xdata), np.max(xdata)
@@ -138,20 +197,24 @@ def find_roots(func, xdata, coeffs, a):
         a.scatter(r, func(r, *coeffs), c=255)
     return roots
 
-# поиск экстремумов функции
 def find_extrems(func, xdata, coeffs, a):
+    '''
+    Ищет локальные эквтремумы функции
+    :param func: исследуемая функция
+    :param xdata: список значений x для N графиков [[x1, x2], [x1', x2'], ...]
+    :param coeffs: коэффициенты для функции, вычисленные с помощью МНК
+    :param a: холст с графиком (фигура окна Tkinter)
+    :return: extrems: список экстремумов, округлённых до 5-го знака после запятой:
+    '''
     f = func(x, *coeffs)
-
     def f_deriv(a):
         d1 = f.diff(x, 1)
         d2 = lambdify(x, d1)
         return d2(a)
-
     def f_second_deriv(a):
         d3 = f.diff(x, 2)
         d4 = lambdify(x, d3)
         return d4(a)
-
     def find_local_min(f_deriv, f_second_deriv, x_0, max_steps=30, delta=0.001):
         x_old = x_0
         for i in range(max_steps):
@@ -163,7 +226,6 @@ def find_extrems(func, xdata, coeffs, a):
                 break
             x_old = x_new
         return x_new
-
     extrems = []
     for i in range(10):
         min, max = np.min(xdata), np.max(xdata)
@@ -177,8 +239,22 @@ def find_extrems(func, xdata, coeffs, a):
         a.scatter(x_min, func(x_min, *coeffs))
     return extrems
 
-# рисование графика в окне tkinter
 def plotting(formulas, xdata, ydata, popt, pcov, title, x_label, y_label, error, roots, extr):
+    '''
+    Рисует график функции в окнет Tkinter
+    :param formulas: формулы y(x) = ... ['formula_1', 'formula_2', ...]
+    :param xdata: список значений x для N графиков [[x1, x2], [x1', x2'], ...]
+    :param ydata: список значений y для N графиков [[y1, y2], [y1', y2'], ...]
+    :param popt: коэффициенты, вычисленные с помощью curve_fit
+    :param pcov: ковариационная матрица коэффициентов
+    :param title: заголовок графика
+    :param x_label: заголовок оси х графика
+    :param y_label: заголовок оси y графика
+    :param error: нужны ли погрешности
+    :param roots: нужны ли нули функции
+    :param extr: нужны ли экстремумы функции
+    :return: none
+    '''
     window = Tk()
     window.title("График зависимости")
 
