@@ -31,9 +31,9 @@ def plotting_graph(formulas: list, x: list, y: list, title: str,
         return False
 
 # пример входных данных
-# formulas = ['a \cdot x^3 + b \cdot x^2', 'a*x**2 + b']
-# x = ['-5 -4 -3 -2 -1 0 1 2 3 4 5', '-5 -4 -3 -2 -1 0 1 2 3 4 5']
-# y = ['0 16 18 12 4 0.3 6 28 72 144 250', '375 240 135 60,1 15 0 15 60 135 240 375']
+# formulas = ['a \cdot x^3 + b \cdot x^2' , 'a*x + b']
+# x = ['-5 -4 -3 -2 -1 0 1 2 3 4 5', '-5 -4 -3 -2 ']
+# y = ['0 16 18 12 4 0.3 6 28 72 144 250', '-6 -5 -4 -3']
 # title = 'График_1'
 # x_label = 't, c'
 # y_label = 'l, m'
