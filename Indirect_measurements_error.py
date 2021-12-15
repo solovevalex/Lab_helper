@@ -6,7 +6,7 @@ from sympy.parsing.sympy_parser import standard_transformations, implicit_multip
 '''
 
 
-transformations = (standard_transformations + (implicit_multiplication_application,))
+
 
 '''exp_value -- считает значение функции, полученной в виде строки.
 Передаются значения:
@@ -16,6 +16,7 @@ transformations = (standard_transformations + (implicit_multiplication_applicati
     value -- значение выражения при введенных переменных.
 '''
 def exp_value(str_exp, values):
+    transformations = (standard_transformations + (implicit_multiplication_application,))
     exp = parse_expr(str_exp, transformations=transformations)
     exp_variables = list(exp.free_symbols)
     values_ = {}
@@ -38,6 +39,7 @@ def exp_value(str_exp, values):
     diff_list_calc -- список дифференциалов, для рассчетов.
 '''
 def get_error_func(str_exp, constants):
+    transformations = (standard_transformations + (implicit_multiplication_application,))
     exp = parse_expr(str_exp, transformations=transformations)
     exp_variables = list(exp.free_symbols)
     str_exp_variables = []
@@ -67,9 +69,10 @@ def get_error_func(str_exp, constants):
 
 '''
 Всякие проверки
-
-my_str = "x * y"
-str_error_func_user, str_var_only, diff_list_user, str_error_func_calc, diff_list_calc = get_error_func(my_str,[])
-print(str_error_func_calc)
-print(exp_value(my_str, {'x':5, 'y':4}))
 '''
+# my_str = "((e*q*w * dr)**2 + (q*r*w * de)**2)**0,5"
+# str_error_func_user, str_var_only, diff_list_user, str_error_func_calc, diff_list_calc = get_error_func(my_str,[])
+# print(get_error_func(my_str,[]))
+# print(str_error_func_calc)
+# print(exp_value(my_str, {'x':5, 'y':4}))
+

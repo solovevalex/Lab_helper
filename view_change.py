@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
-
+import re
 import Function_Plotting_Graph as ann_func
 import Indirect_measurements_error as sonya_func
 
@@ -74,12 +74,7 @@ class add_graph():
         font.setWeight(75)
         self.label_graphics_Y.setFont(font)
         self.label_graphics_Y.setObjectName("label_graphics_Y")
-        self.label_label_high = QtWidgets.QLabel(self.graph)
-        self.label_label_high.setGeometry(QtCore.QRect(200, 290, 551, 41))
-        font = QtGui.QFont()
-        font.setPointSize(13)
-        self.label_label_high.setFont(font)
-        self.label_label_high.setObjectName("label_label_high")
+
         self.formula_graph = QtWidgets.QLabel(self.graph)
         self.formula_graph.setGeometry(QtCore.QRect(70, 350, 821, 91))
         font = QtGui.QFont()
@@ -95,8 +90,8 @@ class add_graph():
         self.label_graphics_high_2.setText(_translate("MainWindow", "введите данные(точки графика):"))
         self.label_graph_X.setText(_translate("MainWindow", "x"))
         self.label_graphics_Y.setText(_translate("MainWindow", "y"))
-        self.label_label_high.setText(_translate("MainWindow", "здесь вы получите формулу приближенного графика"))
-        self.formula_graph.setText(_translate("MainWindow", "формула для вашего графика:"))
+
+        self.formula_graph.setText(_translate("MainWindow", 'Для запуска вернитесь во вкладку "главный график".'))
 
 
 class Ui_MainWindow(object):
@@ -357,15 +352,21 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.label_mis_high_5.setFont(font)
         self.label_mis_high_5.setObjectName("label_mis_high_5")
-        self.number_mistake = QtWidgets.QLabel(self.mistakes)
+
+
+
+
+        self.number_mistake = QtWidgets.QTextEdit(self.mistakes)
         self.number_mistake.setGeometry(QtCore.QRect(260, 530, 471, 61))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
         font.setWeight(75)
         self.number_mistake.setFont(font)
-        self.number_mistake.setStyleSheet("background-color: rgb(255, 255, 127);")
         self.number_mistake.setObjectName("number_mistake")
+        self.number_mistake.setStyleSheet("background-color: rgb(255, 255, 127);")
+
+
         self.mistake_name_const = QtWidgets.QTextEdit(self.mistakes)
         self.mistake_name_const.setGeometry(QtCore.QRect(240, 160, 231, 41))
         font = QtGui.QFont()
@@ -373,6 +374,7 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.mistake_name_const.setFont(font)
         self.mistake_name_const.setObjectName("mistake_name_const")
+
         self.formula_mistake_need = QtWidgets.QTextEdit(self.mistakes)
         self.formula_mistake_need.setGeometry(QtCore.QRect(240, 50, 501, 87))
         font = QtGui.QFont()
@@ -381,6 +383,7 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.formula_mistake_need.setFont(font)
         self.formula_mistake_need.setObjectName("formula_mistake_need")
+
         self.label_small_1 = QtWidgets.QLabel(self.mistakes)
         self.label_small_1.setGeometry(QtCore.QRect(150, 370, 141, 16))
         font = QtGui.QFont()
@@ -440,15 +443,16 @@ class Ui_MainWindow(object):
         self.btn_mis_getFormula.setFont(font)
         self.btn_mis_getFormula.setStyleSheet("background-color: rgb(255, 170, 127);")
         self.btn_mis_getFormula.setObjectName("btn_mis_getFormula")
-        self.formula_mistake = QtWidgets.QLabel(self.mistakes)
+        self.formula_mistake = QtWidgets.QTextEdit(self.mistakes)
         self.formula_mistake.setGeometry(QtCore.QRect(180, 210, 691, 87))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
         font.setWeight(75)
         self.formula_mistake.setFont(font)
-        self.formula_mistake.setStyleSheet("background-color: rgb(255, 170, 0);")
         self.formula_mistake.setObjectName("formula_mistake")
+        self.formula_mistake.setStyleSheet("background-color: rgb(255, 170, 0);")
+
         self.btn_mis_getFigure = QtWidgets.QPushButton(self.mistakes)
         self.btn_mis_getFigure.setGeometry(QtCore.QRect(370, 480, 251, 41))
         font = QtGui.QFont()
@@ -499,8 +503,6 @@ class Ui_MainWindow(object):
         self.label_graphics_high_3.setText(_translate("MainWindow", "введите данные(точки графика):"))
         self.label_graph_X_1.setText(_translate("MainWindow", "x"))
         self.label_graphics_Y_1.setText(_translate("MainWindow", "y"))
-
-
         self.check_mistake_1.setText(_translate("MainWindow", "Хочу погрешность"))
         self.check_zero_1.setText(_translate("MainWindow", "Хочу нули ф-ии"))
         self.check_extremum_1.setText(_translate("MainWindow", "хочу экстремумы"))
@@ -688,48 +690,64 @@ class Ui_MainWindow(object):
         return place
 
     def sonya_func_get_formula_mis(self):
-        list_const = (list(self.list_making(self.mistake_name_const.toPlainText())))
-        str_formula = (self.formula_mistake_need.toPlainText())
-        sonya_results = sonya_func.get_error_func(str_formula, list_const)
-        self.set_text_value(self.text_mistake_const, list_const)
-        self.set_text_value(self.text_mistake_var_middle, sonya_results[1])
-        self.set_text_value(self.text_mistake_var_deviation, sonya_results[2])
-        self.formula_mistake.setText(sonya_results[0])
-
-    def create_dict_mis(self, text):
         try:
-            text = text.split("\n")
+            list_const = (list(self.list_making(self.mistake_name_const.toPlainText())))
+            str_formula = (self.formula_mistake_need.toPlainText())
+            sonya_results = sonya_func.get_error_func(str_formula, list_const)
+            self.set_text_value(self.text_mistake_const, list_const)
+            self.set_text_value(self.text_mistake_var_middle, sonya_results[1])
+            self.set_text_value(self.text_mistake_var_deviation, sonya_results[2])
+            self.formula_mistake.setText(sonya_results[0])
+        except BaseException:
+            self.error()
+    def create_dict_mis(self, text):
+        text = text.replace(' ', '')
+        text = text.split("\n")
+        try:
             list_need = []
             for part in text:
-                part = part.replace(' ', '')
-
                 part = part.split('=')
+
+                part[1] = part[1].replace(',', '.')
 
                 part[1] = float(part[1])
 
                 list_need.append(part)
 
             dictionary = dict(list_need)
+
             return dictionary
         except BaseException:
-            return 'qwerty'
+            if text == '':
+                return {}
+
 
     def sonya_func_get_figure(self):
-        dict = self.create_dict_mis(self.text_mistake_const.toPlainText())
-        dict_1 = self.create_dict_mis(self.text_mistake_var_deviation.toPlainText())
-        dict_2 = self.create_dict_mis(self.text_mistake_var_middle.toPlainText())
+        try:
+            dict_start = self.create_dict_mis(self.text_mistake_const.toPlainText())
+            dict_1 = self.create_dict_mis(self.text_mistake_var_deviation.toPlainText())
+            dict_2 = self.create_dict_mis(self.text_mistake_var_middle.toPlainText())
+            dict_res = {}
+            for key in dict_1:
+                key_res = key[1:].upper()
+                dict_res[key_res] = dict_1[key]
+            dict_res.update(dict_start)
+            dict_res.update(dict_2)
 
-        if dict == 'qwerty' or dict_1 == 'qwerty' or dict_2 == 'qwerty':
-            self.error()
-            pass
-        else:
-            dict.update(dict_1)
-            dict.update(dict_2)
-
-            print(dict)
-            figure = sonya_func.exp_value(self.formula_mistake_need.toPlainText(), dict)
+            text = self.formula_mistake.toPlainText()
+            text = text.replace('sqrt','') + "**0.5"
+            print(text)
+            pattern = re.compile('d\w')
+            need_replace = pattern.findall(text)
+            for part in need_replace:
+                part_replace = part[1].upper()
+                text = re.sub(f'{part}', part_replace, text)
+            print(text, dict_res)
+            figure = sonya_func.exp_value(text, dict_res)
             print('ok')
             self.number_mistake.setText(f'{figure}')
+        except BaseException:
+            self.error()
 
 
 
