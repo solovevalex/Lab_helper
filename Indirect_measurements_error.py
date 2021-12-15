@@ -70,9 +70,9 @@ def get_error_func(str_exp, constants):
 '''
 Всякие проверки
 '''
-# my_str = "((e*q*w * dr)**2 + (q*r*w * de)**2)**0,5"
-# str_error_func_user, str_var_only, diff_list_user, str_error_func_calc, diff_list_calc = get_error_func(my_str,[])
-# print(get_error_func(my_str,[]))
-# print(str_error_func_calc)
-# print(exp_value(my_str, {'x':5, 'y':4}))
+# my_str = "((w * Q)**2 + (q * W)**2)**0.5"
+# # str_error_func_user, str_var_only, diff_list_user, str_error_func_calc, diff_list_calc = get_error_func(my_str,[])
+# # print(get_error_func(my_str,[]))
+# # print(str_error_func_calc)
+# print(exp_value(my_str, {'Q': 1.0, 'W': 1.0, 'q': 1.0, 'w': 1.0}))
 

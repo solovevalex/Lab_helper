@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QAction
 import re
 import Function_Plotting_Graph as ann_func
 import Indirect_measurements_error as sonya_func
@@ -100,7 +100,7 @@ class Ui_MainWindow(object):
 
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1000, 719)
-
+        print(type(MainWindow))
         """Создание всего..."""
         self.create_main()
         self.create_menu_Bar()
@@ -120,6 +120,7 @@ class Ui_MainWindow(object):
         """Воссоединение всего!"""
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         self.add_functions()
+
 
     def create_ecxel_fail(self):
         self.ecxel_fail = QtWidgets.QWidget()
@@ -187,7 +188,6 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.label_graphics_Y_1.setFont(font)
         self.label_graphics_Y_1.setObjectName("label_graphics_Y_1")
-
         self.check_mistake_1 = QtWidgets.QCheckBox(self.graphics_main)
         self.check_mistake_1.setGeometry(QtCore.QRect(250, 300, 131, 20))
         self.check_mistake_1.setObjectName("check_mistake_1")
@@ -488,6 +488,28 @@ class Ui_MainWindow(object):
         self.menu_btn = QtWidgets.QMenu(self.menuBar)
         self.menu_btn.setObjectName("menu_btn")
         self.menuBar.addAction(self.menu_btn.menuAction())
+        self.menuBar.addMenu(self.menu_btn)
+
+        # open_file = fileMenu.addMenu("&Открыть")
+        # save_file = fileMenu.addMenu("&Сохранить")
+
+        self.menu_btn.addAction('Справка', self.action_clicked)
+    def action_clicked(self):
+        error = QMessageBox()
+        error.setWindowTitle("О программе")
+        error.setText("Приветствуем!")
+        error.setStandardButtons(QMessageBox.Reset | QMessageBox.Ok | QMessageBox.Cancel)
+
+        error.setDefaultButton(QMessageBox.Ok)
+        error.setInformativeText("два раза действие не выполнить")
+        error.setDetailedText("детали")
+        error.setDetailedText("новове")
+
+
+
+
+        error.exec_()
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -532,7 +554,7 @@ class Ui_MainWindow(object):
         self.btn_mis_getFigure.setText(_translate("MainWindow", "Получить числовое значение"))
         self.btn_mis_new.setText(_translate("MainWindow", "Обновить окно!"))
         self.menu.setTabText(self.menu.indexOf(self.mistakes), _translate("MainWindow", "Погрешности"))
-        self.menu_btn.setTitle(_translate("MainWindow", "Справка"))
+        self.menu_btn.setTitle(_translate("MainWindow", "О программе"))
 
     """Долгожданные функции)))"""
 
@@ -570,8 +592,6 @@ class Ui_MainWindow(object):
                 self.menu.setCurrentIndex(2)
 
                 break
-        if value_use['graph_10'] is not 0:
-            print('возможности исчерпаны!')
 
     def delete_window_graph_add(self):
         n = 9 - len(names_use)
@@ -707,18 +727,15 @@ class Ui_MainWindow(object):
             list_need = []
             for part in text:
                 part = part.split('=')
-
                 part[1] = part[1].replace(',', '.')
-
                 part[1] = float(part[1])
-
                 list_need.append(part)
 
             dictionary = dict(list_need)
 
             return dictionary
         except BaseException:
-            if text == '':
+            if text == ['']:
                 return {}
 
 
@@ -728,12 +745,13 @@ class Ui_MainWindow(object):
             dict_1 = self.create_dict_mis(self.text_mistake_var_deviation.toPlainText())
             dict_2 = self.create_dict_mis(self.text_mistake_var_middle.toPlainText())
             dict_res = {}
-            for key in dict_1:
-                key_res = key[1:].upper()
-                dict_res[key_res] = dict_1[key]
-            dict_res.update(dict_start)
-            dict_res.update(dict_2)
-
+            print(dict_1)
+            for key_old in dict_1:
+                key_res = key_old[1:].upper()
+                dict_res[key_res] = dict_1[key_old]
+            print(dict_res)
+            dict_res = dict_res|dict_start|dict_2
+            print(dict_res, 'ok')
             text = self.formula_mistake.toPlainText()
             text = text.replace('sqrt','') + "**0.5"
             print(text)
@@ -744,10 +762,15 @@ class Ui_MainWindow(object):
                 text = re.sub(f'{part}', part_replace, text)
             print(text, dict_res)
             figure = sonya_func.exp_value(text, dict_res)
-            print('ok')
+            print(figure)
             self.number_mistake.setText(f'{figure}')
         except BaseException:
             self.error()
+
+
+
+
+
 
 
 
