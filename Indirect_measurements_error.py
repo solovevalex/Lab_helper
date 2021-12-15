@@ -6,7 +6,7 @@ from sympy.parsing.sympy_parser import standard_transformations, implicit_multip
 '''
 
 
-
+transformations = (standard_transformations + (implicit_multiplication_application,))
 
 '''exp_value -- считает значение функции, полученной в виде строки.
 Передаются значения:
@@ -16,7 +16,6 @@ from sympy.parsing.sympy_parser import standard_transformations, implicit_multip
     value -- значение выражения при введенных переменных.
 '''
 def exp_value(str_exp, values):
-    transformations = (standard_transformations + (implicit_multiplication_application,))
     exp = parse_expr(str_exp, transformations=transformations)
     exp_variables = list(exp.free_symbols)
     values_ = {}
@@ -27,7 +26,8 @@ def exp_value(str_exp, values):
     return value
 
 
-'''get_error_func -- на основе выражения-строки и списка констант считает формулу для косвенной погрешности измерения.
+'''
+get_error_func -- на основе выражения-строки и списка констант считает формулу для косвенной погрешности измерения.
 Передаются значения:
     str_exp -- введенное выражение;
     constants -- список констант.
@@ -39,7 +39,6 @@ def exp_value(str_exp, values):
     diff_list_calc -- список дифференциалов, для рассчетов.
 '''
 def get_error_func(str_exp, constants):
-    transformations = (standard_transformations + (implicit_multiplication_application,))
     exp = parse_expr(str_exp, transformations=transformations)
     exp_variables = list(exp.free_symbols)
     str_exp_variables = []
@@ -54,10 +53,16 @@ def get_error_func(str_exp, constants):
     diff_list_user = []
     diff_list_calc = []
     for i in range(len(str_var_only)):
-        diff_user = "(" + str(sym.diff(exp, str_to_var[str_var_only[i]])) + " * d" + str_var_only[i] + ")**2"
+        expr = sym.diff(exp, str_to_var[str_var_only[i]])
+        expr = sym.simplify(expr / exp)
+        diff_user = "(" + str(expr) + " * d" + str_var_only[i] + ")**2"
         diff_list_user.append("d" + str_var_only[i])
-        diff_calc = "(" + str(sym.diff(exp, str_to_var[str_var_only[i]]))+ " * " + str_var_only[i].upper() + ")**2"
-        diff_list_calc.append(str_var_only[i].upper())
+        if str_var_only[i].isupper() == True:
+            diff_calc = "(" + str(expr) + " * " + str_var_only[i].lower() + ")**2"
+            diff_list_calc.append(str_var_only[i].lower())
+        else:
+            diff_calc = "(" + str(expr)+ " * " + str_var_only[i].upper() + ")**2"
+            diff_list_calc.append(str_var_only[i].upper())
         str_diff_func_user += diff_user
         str_diff_func_calc += diff_calc
         if i < len(str_var_only) - 1:
@@ -68,11 +73,13 @@ def get_error_func(str_exp, constants):
     return str_error_func_user, str_var_only, diff_list_user, str_error_func_calc, diff_list_calc
 
 '''
-Всякие проверки
-'''
-# my_str = "((w * Q)**2 + (q * W)**2)**0.5"
-# # str_error_func_user, str_var_only, diff_list_user, str_error_func_calc, diff_list_calc = get_error_func(my_str,[])
-# # print(get_error_func(my_str,[]))
-# # print(str_error_func_calc)
-# print(exp_value(my_str, {'Q': 1.0, 'W': 1.0, 'q': 1.0, 'w': 1.0}))
+my_str = "x * Y"
+str_error_func_user, str_var_only, diff_list_user, str_error_func_calc, diff_list_calc = get_error_func(my_str,[])
+print(str_error_func_calc)
 
+print(exp_value(str_error_func_calc, {'x':5, 'y':4, 'X':0.1, 'Y':0.2}))
+
+
+print(diff_list_user)
+print(diff_list_calc)
+'''
