@@ -1,17 +1,18 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-import openpyxl as xls
+from PyQt5.QtWidgets import QMessageBox
+import re
+import Function_Plotting_Graph as ann_func
+import Indirect_measurements_error as sonya_func
 
 # Здесь объявлю возможные имена для дополнительных графических окон
-names_start = ['график 2', 'график 3', 'график 4', 'график 5', 'график 6', 'график 7', 'график 8', 'график 9', 'график 10']
-names_use = ['график 2', 'график 3', 'график 4', 'график 5', 'график 6', 'график 7', 'график 8', 'график 9', 'график 10']
-value_start = dict(graph_2=0,  graph_3=0,  graph_4=0,  graph_5=0,  graph_6=0,  graph_7=0,  graph_8=0,  graph_9=0, graph_10=0)
-value_use = dict(graph_2=0,  graph_3=0,  graph_4=0,  graph_5=0,  graph_6=0,  graph_7=0,  graph_8=0,  graph_9=0, graph_10=0)
+names_start = ['график 2', 'график 3', 'график 4', 'график 5', 'график 6', 'график 7', 'график 8', 'график 9',
+               'график 10']
+names_use = ['график 2', 'график 3', 'график 4', 'график 5', 'график 6', 'график 7', 'график 8', 'график 9',
+             'график 10']
+value_use = dict(graph_2=0, graph_3=0, graph_4=0, graph_5=0, graph_6=0, graph_7=0, graph_8=0, graph_9=0, graph_10=0)
 value_names = ['graph_1', 'graph_2', 'graph_3', 'graph_4', 'graph_5', 'graph_6', 'graph_7', 'graph_8',
-                       'graph_9', 'graph_10']
-ecxel_fail = None
-dict_mis_const = {}
-
-
+               'graph_9', 'graph_10']
+str_exp = ""
 
 
 class add_graph():
@@ -73,12 +74,7 @@ class add_graph():
         font.setWeight(75)
         self.label_graphics_Y.setFont(font)
         self.label_graphics_Y.setObjectName("label_graphics_Y")
-        self.label_label_high = QtWidgets.QLabel(self.graph)
-        self.label_label_high.setGeometry(QtCore.QRect(200, 290, 551, 41))
-        font = QtGui.QFont()
-        font.setPointSize(13)
-        self.label_label_high.setFont(font)
-        self.label_label_high.setObjectName("label_label_high")
+
         self.formula_graph = QtWidgets.QLabel(self.graph)
         self.formula_graph.setGeometry(QtCore.QRect(70, 350, 821, 91))
         font = QtGui.QFont()
@@ -94,8 +90,8 @@ class add_graph():
         self.label_graphics_high_2.setText(_translate("MainWindow", "введите данные(точки графика):"))
         self.label_graph_X.setText(_translate("MainWindow", "x"))
         self.label_graphics_Y.setText(_translate("MainWindow", "y"))
-        self.label_label_high.setText(_translate("MainWindow", "здесь вы получите формулу приближенного графика"))
-        self.formula_graph.setText(_translate("MainWindow", "формула для вашего графика:"))
+
+        self.formula_graph.setText(_translate("MainWindow", 'Для запуска вернитесь во вкладку "главный график".'))
 
 
 class Ui_MainWindow(object):
@@ -108,7 +104,7 @@ class Ui_MainWindow(object):
         """Создание всего..."""
         self.create_main()
         self.create_menu_Bar()
-        self.create_ecxel_fail()
+        #self.create_ecxel_fail()
         self.create_mis()
         self.create_graphics()
 
@@ -124,8 +120,6 @@ class Ui_MainWindow(object):
         """Воссоединение всего!"""
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         self.add_functions()
-
-
 
     def create_ecxel_fail(self):
         self.ecxel_fail = QtWidgets.QWidget()
@@ -178,7 +172,7 @@ class Ui_MainWindow(object):
         self.label_graphics_high_3.setFont(font)
         self.label_graphics_high_3.setObjectName("label_graphics_high_3")
         self.label_graph_X_1 = QtWidgets.QLabel(self.graphics_main)
-        self.label_graph_X_1.setGeometry(QtCore.QRect(380, 180, 71, 21))
+        self.label_graph_X_1.setGeometry(QtCore.QRect(910, 180, 71, 21))
         font = QtGui.QFont()
         font.setPointSize(15)
         font.setBold(True)
@@ -186,28 +180,14 @@ class Ui_MainWindow(object):
         self.label_graph_X_1.setFont(font)
         self.label_graph_X_1.setObjectName("label_graph_X_1")
         self.label_graphics_Y_1 = QtWidgets.QLabel(self.graphics_main)
-        self.label_graphics_Y_1.setGeometry(QtCore.QRect(380, 210, 71, 41))
+        self.label_graphics_Y_1.setGeometry(QtCore.QRect(910, 210, 71, 41))
         font = QtGui.QFont()
         font.setPointSize(15)
         font.setBold(True)
         font.setWeight(75)
         self.label_graphics_Y_1.setFont(font)
         self.label_graphics_Y_1.setObjectName("label_graphics_Y_1")
-        self.label_label_high_5 = QtWidgets.QLabel(self.graphics_main)
-        self.label_label_high_5.setGeometry(QtCore.QRect(240, 410, 551, 41))
-        font = QtGui.QFont()
-        font.setPointSize(13)
-        self.label_label_high_5.setFont(font)
-        self.label_label_high_5.setObjectName("label_label_high_5")
-        self.formula_graph_1 = QtWidgets.QLabel(self.graphics_main)
-        self.formula_graph_1.setGeometry(QtCore.QRect(90, 450, 821, 91))
-        font = QtGui.QFont()
-        font.setPointSize(15)
-        font.setBold(True)
-        font.setWeight(75)
-        self.formula_graph_1.setFont(font)
-        self.formula_graph_1.setStyleSheet("background-color: rgb(85, 170, 127);")
-        self.formula_graph_1.setObjectName("formula_graph_1")
+
         self.check_mistake_1 = QtWidgets.QCheckBox(self.graphics_main)
         self.check_mistake_1.setGeometry(QtCore.QRect(250, 300, 131, 20))
         self.check_mistake_1.setObjectName("check_mistake_1")
@@ -226,14 +206,14 @@ class Ui_MainWindow(object):
         self.label_graph_high_4.setFont(font)
         self.label_graph_high_4.setObjectName("label_graph_high_4")
         self.btn_start_graph_1 = QtWidgets.QPushButton(self.graphics_main)
-        self.btn_start_graph_1.setGeometry(QtCore.QRect(390, 340, 191, 51))
+        self.btn_start_graph_1.setGeometry(QtCore.QRect(390, 460, 191, 51))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
         font.setWeight(75)
         self.btn_start_graph_1.setFont(font)
         self.btn_start_graph_1.setStyleSheet("background-color: rgb(85, 0, 255);\n"
-"background-color: rgb(170, 170, 255);")
+                                             "background-color: rgb(170, 170, 255);")
         self.btn_start_graph_1.setObjectName("btn_start_graph_1")
         self.formula_graph_need_1 = QtWidgets.QTextEdit(self.graphics_main)
         self.formula_graph_need_1.setGeometry(QtCore.QRect(100, 40, 801, 87))
@@ -244,37 +224,49 @@ class Ui_MainWindow(object):
         self.formula_graph_need_1.setFont(font)
         self.formula_graph_need_1.setObjectName("formula_graph_need_1")
         self.point_X_1 = QtWidgets.QTextEdit(self.graphics_main)
-        self.point_X_1.setGeometry(QtCore.QRect(100, 170, 261, 41))
+        self.point_X_1.setGeometry(QtCore.QRect(100, 170, 801, 41))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
         self.point_X_1.setFont(font)
         self.point_X_1.setObjectName("point_X_1")
         self.point_Y_1 = QtWidgets.QTextEdit(self.graphics_main)
-        self.point_Y_1.setGeometry(QtCore.QRect(100, 210, 261, 41))
+        self.point_Y_1.setGeometry(QtCore.QRect(100, 210, 801, 41))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
         self.point_Y_1.setFont(font)
         self.point_Y_1.setObjectName("point_Y_1")
+
         self.btn_add_graph_1 = QtWidgets.QPushButton(self.graphics_main)
-        self.btn_add_graph_1.setGeometry(QtCore.QRect(200, 560, 261, 71))
+        self.btn_add_graph_1.setGeometry(QtCore.QRect(290, 400, 191, 51))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
         self.btn_add_graph_1.setFont(font)
-        self.btn_add_graph_1.setStyleSheet("background-color: rgb(255, 0, 0);")
+        self.btn_add_graph_1.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.btn_add_graph_1.setObjectName("btn_add_graph_1")
+
+        self.btn_clear_graph = QtWidgets.QPushButton(self.graphics_main)
+        self.btn_clear_graph.setGeometry(QtCore.QRect(390, 560, 191, 51))
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.btn_clear_graph.setFont(font)
+        self.btn_clear_graph.setStyleSheet("background-color: rgb(170, 170, 255);")
+        self.btn_clear_graph.setObjectName("btn_clear_graph")
+
         self.btn_new_graph_1 = QtWidgets.QPushButton(self.graphics_main)
-        self.btn_new_graph_1.setGeometry(QtCore.QRect(540, 560, 261, 71))
+        self.btn_new_graph_1.setGeometry(QtCore.QRect(500,400, 191, 51))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
         self.btn_new_graph_1.setFont(font)
-        self.btn_new_graph_1.setStyleSheet("background-color: rgb(85, 170, 255);")
+        self.btn_new_graph_1.setStyleSheet("background-color: rgb(170, 170, 255);")
         self.btn_new_graph_1.setObjectName("btn_new_graph_1")
+
         self.horizontalLayoutWidget_2 = QtWidgets.QWidget(self.graphics_main)
-        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(500, 140, 401, 31))
+        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(290, 329, 401, 31))
         self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
         self.horisontalCorrect_lbl_gr = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_2)
         self.horisontalCorrect_lbl_gr.setContentsMargins(0, 0, 0, 0)
@@ -284,8 +276,7 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.label_graph_paint_1.setFont(font)
-        self.label_graph_paint_1.setStyleSheet("background-color: rgb(170, 170, 255);\n"
-"background-color: rgb(170, 85, 255);")
+        self.label_graph_paint_1.setStyleSheet("background-color: rgb(170, 85, 255);")
         self.label_graph_paint_1.setObjectName("label_graph_paint_1")
         self.horisontalCorrect_lbl_gr.addWidget(self.label_graph_paint_1)
         self.label_graph_paint_2 = QtWidgets.QLabel(self.horizontalLayoutWidget_2)
@@ -305,7 +296,7 @@ class Ui_MainWindow(object):
         self.label_graph_paint_3.setObjectName("label_graph_paint_3")
         self.horisontalCorrect_lbl_gr.addWidget(self.label_graph_paint_3)
         self.horizontalLayoutWidget_3 = QtWidgets.QWidget(self.graphics_main)
-        self.horizontalLayoutWidget_3.setGeometry(QtCore.QRect(500, 180, 401, 89))
+        self.horizontalLayoutWidget_3.setGeometry(QtCore.QRect(290, 360, 401, 31))
         self.horizontalLayoutWidget_3.setObjectName("horizontalLayoutWidget_3")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_3)
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -361,15 +352,21 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.label_mis_high_5.setFont(font)
         self.label_mis_high_5.setObjectName("label_mis_high_5")
-        self.number_mistake = QtWidgets.QLabel(self.mistakes)
+
+
+
+
+        self.number_mistake = QtWidgets.QTextEdit(self.mistakes)
         self.number_mistake.setGeometry(QtCore.QRect(260, 530, 471, 61))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
         font.setWeight(75)
         self.number_mistake.setFont(font)
-        self.number_mistake.setStyleSheet("background-color: rgb(255, 255, 127);")
         self.number_mistake.setObjectName("number_mistake")
+        self.number_mistake.setStyleSheet("background-color: rgb(255, 255, 127);")
+
+
         self.mistake_name_const = QtWidgets.QTextEdit(self.mistakes)
         self.mistake_name_const.setGeometry(QtCore.QRect(240, 160, 231, 41))
         font = QtGui.QFont()
@@ -377,6 +374,7 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.mistake_name_const.setFont(font)
         self.mistake_name_const.setObjectName("mistake_name_const")
+
         self.formula_mistake_need = QtWidgets.QTextEdit(self.mistakes)
         self.formula_mistake_need.setGeometry(QtCore.QRect(240, 50, 501, 87))
         font = QtGui.QFont()
@@ -385,6 +383,7 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.formula_mistake_need.setFont(font)
         self.formula_mistake_need.setObjectName("formula_mistake_need")
+
         self.label_small_1 = QtWidgets.QLabel(self.mistakes)
         self.label_small_1.setGeometry(QtCore.QRect(150, 370, 141, 16))
         font = QtGui.QFont()
@@ -444,15 +443,16 @@ class Ui_MainWindow(object):
         self.btn_mis_getFormula.setFont(font)
         self.btn_mis_getFormula.setStyleSheet("background-color: rgb(255, 170, 127);")
         self.btn_mis_getFormula.setObjectName("btn_mis_getFormula")
-        self.formula_mistake = QtWidgets.QLabel(self.mistakes)
+        self.formula_mistake = QtWidgets.QTextEdit(self.mistakes)
         self.formula_mistake.setGeometry(QtCore.QRect(180, 210, 691, 87))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
         font.setWeight(75)
         self.formula_mistake.setFont(font)
-        self.formula_mistake.setStyleSheet("background-color: rgb(255, 170, 0);")
         self.formula_mistake.setObjectName("formula_mistake")
+        self.formula_mistake.setStyleSheet("background-color: rgb(255, 170, 0);")
+
         self.btn_mis_getFigure = QtWidgets.QPushButton(self.mistakes)
         self.btn_mis_getFigure.setGeometry(QtCore.QRect(370, 480, 251, 41))
         font = QtGui.QFont()
@@ -468,7 +468,7 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.btn_mis_new.setFont(font)
         self.btn_mis_new.setStyleSheet("\n"
-"background-color: rgb(255, 85, 0);")
+                                       "background-color: rgb(255, 85, 0);")
         self.btn_mis_new.setObjectName("btn_mis_new")
         self.menu.addTab(self.mistakes, "")
 
@@ -492,38 +492,37 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label_ex.setText(_translate("MainWindow", "Введите полный путь к Excel файлу,\n"
-"с которым вы собираетесь работать\n"
-"(из этого файла будут считываться данные\n"
-"указанные через индексы)"))
-        self.btn_ex.setText(_translate("MainWindow", "Работать с этим файлом!"))
-        self.menu.setTabText(self.menu.indexOf(self.ecxel_fail), _translate("MainWindow", "Выбор excel файла"))
+        self.btn_clear_graph.setText(_translate("MainWindow", "Обновить окно!!!"))
+        # self.label_ex.setText(_translate("MainWindow", "Введите полный путь к Excel файлу,\n"
+        #                                                "с которым вы собираетесь работать\n"
+        #                                                "(из этого файла будут считываться данные\n"
+        #                                                "указанные через индексы)"))
+        # self.btn_ex.setText(_translate("MainWindow", "Работать с этим файлом!"))
+        # self.menu.setTabText(self.menu.indexOf(self.ecxel_fail), _translate("MainWindow", "Выбор excel файла"))
         self.label_graph_high_1.setText(_translate("MainWindow", "введите формулу для графика:"))
         self.label_graphics_high_3.setText(_translate("MainWindow", "введите данные(точки графика):"))
         self.label_graph_X_1.setText(_translate("MainWindow", "x"))
         self.label_graphics_Y_1.setText(_translate("MainWindow", "y"))
-        self.label_label_high_5.setText(_translate("MainWindow", "здесь вы получите формулу приближенного графика"))
-        self.formula_graph_1.setText(_translate("MainWindow", "формула для вашего графика:"))
         self.check_mistake_1.setText(_translate("MainWindow", "Хочу погрешность"))
         self.check_zero_1.setText(_translate("MainWindow", "Хочу нули ф-ии"))
         self.check_extremum_1.setText(_translate("MainWindow", "хочу экстремумы"))
         self.label_graph_high_4.setText(_translate("MainWindow", "добавьте галочки, если нужно"))
         self.btn_start_graph_1.setText(_translate("MainWindow", "Получить график!"))
         self.btn_add_graph_1.setText(_translate("MainWindow", "хочу добавить график\n"
-"в те же координатные оси"))
-        self.btn_new_graph_1.setText(_translate("MainWindow", "удалить последнее окно с графиком"))
+                                                              "в те же координатные оси"))
+        self.btn_new_graph_1.setText(_translate("MainWindow", "удалить\nпоследнее окно с графиком"))
         self.label_graph_paint_1.setText(_translate("MainWindow", "подпись к графику"))
         self.label_graph_paint_2.setText(_translate("MainWindow", "  подись к оси x"))
         self.label_graph_paint_3.setText(_translate("MainWindow", "  подпись к оси y"))
-        self.menu_graphics.setTabText(self.menu_graphics.indexOf(self.graphics_main), _translate("MainWindow", "главный график"))
-
+        self.menu_graphics.setTabText(self.menu_graphics.indexOf(self.graphics_main),
+                                      _translate("MainWindow", "главный график"))
 
         self.menu.setTabText(self.menu.indexOf(self.graphics), _translate("MainWindow", "графики"))
         self.label_mis_high_1.setText(_translate("MainWindow", "введите формулу для величины, \n"
-"погрешность которой вы хотите посчитать"))
+                                                               "погрешность которой вы хотите посчитать"))
         self.label_mis_high_2.setText(_translate("MainWindow", "укажите, какие буквы являются константой"))
         self.label_mis_high_5.setText(_translate("MainWindow", "если хотите получить числовое значение,\n"
-"введите числовые значения переменных и констант"))
+                                                               "введите числовые значения переменных и констант"))
         self.number_mistake.setText(_translate("MainWindow", "Здесь вы получите числовое значение:"))
         self.label_small_1.setText(_translate("MainWindow", "значение констант"))
         self.label_small_2.setText(_translate("MainWindow", "среднее переменной"))
@@ -536,25 +535,36 @@ class Ui_MainWindow(object):
         self.menu_btn.setTitle(_translate("MainWindow", "Справка"))
 
     """Долгожданные функции)))"""
+
     def add_functions(self):
-        # функция для экселя
-        self.btn_ex.clicked.connect(lambda: print('Ok'))
+
         # функции для погрешностей
-        self.btn_mis_getFormula.clicked.connect(lambda: self.set_text_value(self.text_mistake_const, ['q','w','e','r','t','y']))
-        self.btn_mis_getFigure.clicked.connect(lambda: print(self.create_dict_for_mis_excel(self.text_mistake_const, dict_mis_const)))
-        self.btn_mis_new.clicked.connect(lambda: print(self.read_text(self.formula_mistake_need)))
+        # Вместо ['q','w','e','r','t','y'] НАДО получить списки переменных и констант
+        # Кроме того, эта вець должна вставлять формулу!!! Это ее первостепенная задача
+        """"Это первая часть для погрешностей"""
+        self.btn_mis_getFormula.clicked.connect(lambda: self.sonya_func_get_formula_mis())
+        """"Это вторая часть для погрешностей"""
+        self.btn_mis_getFigure.clicked.connect(lambda: self.sonya_func_get_figure())
+        self.btn_mis_new.clicked.connect(lambda: self.clear_mis())
         # функции для графиков
+        # создание и удаление дополнительных окон для графиков
         self.btn_add_graph_1.clicked.connect(lambda: self.create_window_graph_add())
         self.btn_new_graph_1.clicked.connect(lambda: self.delete_window_graph_add())
-        self.btn_start_graph_1.clicked.connect(lambda: print('ok'))
+        # Непосредственно анина функция
+        self.btn_start_graph_1.clicked.connect(lambda: print(self.set_params_graph()))
+        self.btn_start_graph_1.clicked.connect(lambda: self.Ann_function_final())
+        # Удаление из главного окна графиков данных
+        self.btn_clear_graph.clicked.connect(lambda: self.clear_graphic())
 
+    # Мое для создания окон в графиках
     def create_window_graph_add(self):
         for key in value_use:
             if value_use[key] == 0:
                 value_use[key] = add_graph(key)
-                self.menu_graphics.addTab(value_use[key].graph,"")
+                self.menu_graphics.addTab(value_use[key].graph, "")
                 _translate = QtCore.QCoreApplication.translate
-                self.menu_graphics.setTabText(self.menu_graphics.indexOf(value_use[key].graph), _translate("MainWindow", names_use[0]))
+                self.menu_graphics.setTabText(self.menu_graphics.indexOf(value_use[key].graph),
+                                              _translate("MainWindow", names_use[0]))
                 self.menu.setTabText(self.menu.indexOf(self.graphics), _translate("MainWindow", "графики"))
                 names_use.pop(0)
                 self.menu.setCurrentIndex(2)
@@ -578,28 +588,172 @@ class Ui_MainWindow(object):
             self.menu_graphics.removeTab(n)
             value_use[9] = 0
 
+    # считывание текста напрямую
     def read_text(self, place):
         return place.toPlainText()
 
+    # установление красивых стобликов в разделе погрешности
     def set_text_value(self, place, vars):
         for var in vars:
             place.append(f"{var} = ")
 
-    def open_excel_fail(self, way):
-        global ecxel_fail
-        ecxel_fail = xls.load_workbook(way)
+    # Функция устанавливает параметры для аниной функции
+    def set_params_graph(self):
+        """Индексация правильная, т.е. индекс о,о,о соответствует данным о первом графике"""
+        list_X = []  # список строк переменных X
+        list_Y = []  # список строк переменныx Y
+        list_formuls = []  # список строк формул
+        error = False
+        roots = False
+        extr = False
+        x_label = ''  # Подпись к оси Х
+        y_label = ''  # Подпись к оси Y
+        title = ''  # Главная подпись к графику
 
-    def create_dict_for_mis_excel(self, place, dictionary):
-        text = place.toPlainText().replace(' ', '').split('\n')
-        text_new = []
-        for part in text:
-            text_new.append(part.split("="))
-            dictionary = dict(text_new)
-        return dictionary
+        # Проверка чекбоксов на зажантие
+        if self.check_zero_1.isChecked():
+            roots = True
+        if self.check_mistake_1.isChecked():
+            error = True
+        if self.check_extremum_1.isChecked():
+            extr = True
+
+        # Занесение данных со страницы главного графика
+        list_X.append(self.read_text(self.point_X_1))
+        list_Y.append(self.read_text(self.point_Y_1))
+        list_formuls.append(self.read_text(self.formula_graph_need_1))
+        x_label = self.read_text(self.text_graph_label_x)
+        y_label = self.read_text(self.text_graph_label_y)
+        title = self.read_text(self.text_graph_label_g)
+
+        # занесение данных с дополнительных графиков
+        for key in value_use:
+            if value_use[key] == 0:
+                break
+            else:
+                list_X.append(value_use[key].point_X.toPlainText())
+                list_Y.append(value_use[key].point_Y.toPlainText())
+                list_formuls.append(value_use[key].formula_graph_need.toPlainText())
+
+        return list_formuls, list_X, list_Y, title, x_label, y_label, error, roots, extr
+
+    def clear_mis(self):
+        _translate = QtCore.QCoreApplication.translate
+        self.formula_mistake_need.clear()
+        self.mistake_name_const.clear()
+        self.formula_mistake.setText(_translate("MainWindow", "Здесь вы получите формулу погрешности"))
+        self.number_mistake.setText(_translate("MainWindow", "Здесь вы получите числовое значение"))
+        self.text_mistake_const.clear()
+        self.text_mistake_var_middle.clear()
+        self.text_mistake_var_deviation.clear()
+
+    def clear_graphic(self):
+        self.formula_graph_need_1.clear()
+        self.point_X_1.clear()
+        self.point_Y_1.clear()
+        self.text_graph_label_x.clear()
+        self.text_graph_label_g.clear()
+        self.text_graph_label_y.clear()
+        self.check_zero_1.setChecked(False)
+        self.check_mistake_1.setChecked(False)
+        self.check_extremum_1.setChecked(False)
+
+    def error(self):
+        error = QMessageBox()
+        error.setWindowTitle("ошибка")
+        error.setText("cейчас это действие выполнить нельзя")
+        error.setIcon(QMessageBox.Warning)
+        error.setStandardButtons(QMessageBox.Ok)
+
+        error.setDefaultButton(QMessageBox.Ok)
+        error.setInformativeText("два раза действие не выполнить")
+        error.setDetailedText("детали")
+
+        # error.buttonClicked.connect(self.popup_action)
+        error.exec_()
+
+    def Ann_function_final(self):
+        a = ann_func.plotting_graph(self.set_params_graph()[0],
+                                    self.set_params_graph()[1],
+                                    self.set_params_graph()[2],
+                                    self.set_params_graph()[3],
+                                    self.set_params_graph()[4],
+                                    self.set_params_graph()[5],
+                                    self.set_params_graph()[6],
+                                    self.set_params_graph()[7],
+                                    self.set_params_graph()[8])
+        if not a:
+            self.error()
+
+    def list_making(self, place):
+        place.split(' ')
+        return place
+
+    def sonya_func_get_formula_mis(self):
+        try:
+            list_const = (list(self.list_making(self.mistake_name_const.toPlainText())))
+            str_formula = (self.formula_mistake_need.toPlainText())
+            sonya_results = sonya_func.get_error_func(str_formula, list_const)
+            self.set_text_value(self.text_mistake_const, list_const)
+            self.set_text_value(self.text_mistake_var_middle, sonya_results[1])
+            self.set_text_value(self.text_mistake_var_deviation, sonya_results[2])
+            self.formula_mistake.setText(sonya_results[0])
+        except BaseException:
+            self.error()
+    def create_dict_mis(self, text):
+        text = text.replace(' ', '')
+        text = text.split("\n")
+        try:
+            list_need = []
+            for part in text:
+                part = part.split('=')
+
+                part[1] = part[1].replace(',', '.')
+
+                part[1] = float(part[1])
+
+                list_need.append(part)
+
+            dictionary = dict(list_need)
+
+            return dictionary
+        except BaseException:
+            if text == '':
+                return {}
+
+
+    def sonya_func_get_figure(self):
+        try:
+            dict_start = self.create_dict_mis(self.text_mistake_const.toPlainText())
+            dict_1 = self.create_dict_mis(self.text_mistake_var_deviation.toPlainText())
+            dict_2 = self.create_dict_mis(self.text_mistake_var_middle.toPlainText())
+            dict_res = {}
+            for key in dict_1:
+                key_res = key[1:].upper()
+                dict_res[key_res] = dict_1[key]
+            dict_res.update(dict_start)
+            dict_res.update(dict_2)
+
+            text = self.formula_mistake.toPlainText()
+            text = text.replace('sqrt','') + "**0.5"
+            print(text)
+            pattern = re.compile('d\w')
+            need_replace = pattern.findall(text)
+            for part in need_replace:
+                part_replace = part[1].upper()
+                text = re.sub(f'{part}', part_replace, text)
+            print(text, dict_res)
+            figure = sonya_func.exp_value(text, dict_res)
+            print('ok')
+            self.number_mistake.setText(f'{figure}')
+        except BaseException:
+            self.error()
+
 
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
