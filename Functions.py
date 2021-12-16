@@ -204,7 +204,7 @@ def find_extrems(func, xdata, coeffs, a):
     :param xdata: список значений x для N графиков [[x1, x2], [x1', x2'], ...]
     :param coeffs: коэффициенты для функции, вычисленные с помощью МНК
     :param a: холст с графиком (фигура окна Tkinter)
-    :return: extrems: список экстремумов, округлённых до 5-го знака после запятой:
+    :return: mins, maxs: списки минимумов и максимумов, округлённых до 5-го знака после запятой
     '''
     f = func(x, *coeffs)
     def f_deriv(a):
@@ -215,7 +215,7 @@ def find_extrems(func, xdata, coeffs, a):
         d3 = f.diff(x, 2)
         d4 = lambdify(x, d3)
         return d4(a)
-    def find_local_min(f_deriv, f_second_deriv, x_0, max_steps=30, delta=0.001):
+    def find_local_extr(f_deriv, f_second_deriv, x_0, max_steps=30, delta=0.001):
         x_old = x_0
         for i in range(max_steps):
             try:
@@ -226,20 +226,23 @@ def find_extrems(func, xdata, coeffs, a):
                 break
             x_old = x_new
         return x_new
-    extrems = []
+    mins = []
+    maxs = []
     for i in range(10):
         min, max = np.min(xdata), np.max(xdata)
         x_0 = min + (max - min)*i/10
-        x_min = find_local_min(f_deriv, f_second_deriv, x_0)
-        if (not x_min) or (abs(func(x_min, *coeffs))) > 0.001:
+        x_extr = find_local_extr(f_deriv, f_second_deriv, x_0)
+        if (x_extr is None) or (abs(f_deriv(x_extr))) > 0.001:
             continue
-        x_min = round(x_min, 5)
-        if x_min not in extrems:
-            extrems.append(x_min)
-        a.scatter(x_min, func(x_min, *coeffs))
-    return extrems
+        x_extr = round(x_extr, 5)
+        if f_second_deriv(x_extr) > 0 and x_extr not in mins:
+            mins.append(x_extr)
+        elif f_second_deriv(x_extr) < 0 and x_extr not in maxs:
+            maxs.append(x_extr)
+        a.scatter(x_extr, func(x_extr, *coeffs))
+    return mins, maxs
 
-def plotting(formulas, xdata, ydata, popt, pcov, title, x_label, y_label, error, roots, extr):
+def plotting(formulas, coeffs_1, xdata, ydata, popt, pcov, title, x_label, y_label, error, roots, extr):
     '''
     Рисует график функции в окнет Tkinter
     :param formulas: формулы y(x) = ... ['formula_1', 'formula_2', ...]
@@ -264,8 +267,12 @@ def plotting(formulas, xdata, ydata, popt, pcov, title, x_label, y_label, error,
 
     sigma = []
     for i in range(len(pcov)):
-        sigma.append(np.sqrt(np.diag(pcov[i])))
+        S = np.sqrt(np.diag(pcov[i]))
+        sigma.append(S)
     popt, sigma = rounding(popt, sigma)
+    sigma_dict = []
+    for i in range(len(pcov)):
+        sigma_dict.append(dict(zip(coeffs_1[i], sigma[i])))
 
     for i in range(len(xdata)):
         formula = "y(x) = " + "$" + formulas[i] + "$"
@@ -292,13 +299,14 @@ def plotting(formulas, xdata, ydata, popt, pcov, title, x_label, y_label, error,
 
     for i in range(len(xdata) - 1, -1, -1):
         if error:
-            text.insert(1.0, 'sigma_' + str(i + 1) + ' = ' + str(sigma[i]) + '\n')
+            text.insert(1.0, 'sigma_' + str(i + 1) + ' = ' + str(sigma_dict[i]) + '\n')
         if roots:
             roots = find_roots(functions[i], xdata[i], popt[i], a)
             text.insert(2.0, 'roots_' + str(i + 1) + '=' + str(roots) + '\n')
         if extr:
-            extrems = find_extrems(functions[i], xdata[i], popt[i], a)
-            text.insert(3.0, 'extrems_' + str(i + 1) + '=' + str(extrems) + '\n')
+            mins, maxs = find_extrems(functions[i], xdata[i], popt[i], a)
+            text.insert(3.0, 'minimums_' + str(i + 1) + '=' + str(mins) + '\n')
+            text.insert(3.0, 'maximums_' + str(i + 1) + '=' + str(maxs) + '\n')
         text.insert(1.0, formulas[i] + '\n')
 
     window.mainloop()
