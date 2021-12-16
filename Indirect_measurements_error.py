@@ -84,7 +84,7 @@ def get_f(str):
     for i in range(len(str)):
         if str[i] == '=':
             f = str[:i]
-            str_ = str.replace(f, "")
+            str_ = str.replace(f, "").replace('=','')
             break
     f = f.replace(" ", "")
     return f, str_
@@ -99,7 +99,7 @@ get_relative_err -- левая часть выражения.
     rel_err -- левая часть.
 '''
 def get_relative_err(y):
-    rel_err = "1/" + y + " * d" + y;
+    rel_err = "1/" + y + " * d" + y
     return rel_err
 
 '''

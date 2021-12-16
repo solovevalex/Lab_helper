@@ -15,6 +15,7 @@ value_names = ['graph_1', 'graph_2', 'graph_3', 'graph_4', 'graph_5', 'graph_6',
                'graph_9', 'graph_10']
 str_exp = ""
 
+
 class Window(QtWidgets.QMainWindow):
     def __init__(self):
         super(Window, self).__init__()
@@ -113,7 +114,7 @@ class Ui_MainWindow(object):
         """Создание всего..."""
         self.create_main()
         self.create_menu_Bar()
-        #self.create_ecxel_fail()
+        # self.create_ecxel_fail()
         self.create_mis()
         self.create_graphics()
 
@@ -129,7 +130,6 @@ class Ui_MainWindow(object):
         """Воссоединение всего!"""
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         self.add_functions()
-
 
     def create_ecxel_fail(self):
         self.ecxel_fail = QtWidgets.QWidget()
@@ -266,7 +266,7 @@ class Ui_MainWindow(object):
         self.btn_clear_graph.setObjectName("btn_clear_graph")
 
         self.btn_new_graph_1 = QtWidgets.QPushButton(self.graphics_main)
-        self.btn_new_graph_1.setGeometry(QtCore.QRect(500,400, 191, 51))
+        self.btn_new_graph_1.setGeometry(QtCore.QRect(500, 400, 191, 51))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
@@ -362,9 +362,6 @@ class Ui_MainWindow(object):
         self.label_mis_high_5.setFont(font)
         self.label_mis_high_5.setObjectName("label_mis_high_5")
 
-
-
-
         self.number_mistake = QtWidgets.QTextEdit(self.mistakes)
         self.number_mistake.setGeometry(QtCore.QRect(260, 530, 471, 61))
         font = QtGui.QFont()
@@ -374,7 +371,6 @@ class Ui_MainWindow(object):
         self.number_mistake.setFont(font)
         self.number_mistake.setObjectName("number_mistake")
         self.number_mistake.setStyleSheet("background-color: rgb(255, 255, 127);")
-
 
         self.mistake_name_const = QtWidgets.QTextEdit(self.mistakes)
         self.mistake_name_const.setGeometry(QtCore.QRect(240, 160, 231, 41))
@@ -619,9 +615,6 @@ class Ui_MainWindow(object):
         error = False
         roots = False
         extr = False
-        x_label = ''  # Подпись к оси Х
-        y_label = ''  # Подпись к оси Y
-        title = ''  # Главная подпись к графику
 
         # Проверка чекбоксов на зажантие
         if self.check_zero_1.isChecked():
@@ -671,7 +664,7 @@ class Ui_MainWindow(object):
         self.check_mistake_1.setChecked(False)
         self.check_extremum_1.setChecked(False)
 
-    def error(self):
+    def error(self, text):
         error = QMessageBox()
         error.setWindowTitle("ошибка")
         error.setText("cейчас это действие выполнить нельзя")
@@ -679,8 +672,8 @@ class Ui_MainWindow(object):
         error.setStandardButtons(QMessageBox.Ok)
 
         error.setDefaultButton(QMessageBox.Ok)
-        error.setInformativeText("два раза действие не выполнить")
-        error.setDetailedText("детали")
+        error.setInformativeText("Где-то вы ввели некорректные данные")
+        error.setDetailedText(text)
 
         # error.buttonClicked.connect(self.popup_action)
         error.exec_()
@@ -696,7 +689,11 @@ class Ui_MainWindow(object):
                                     self.set_params_graph()[7],
                                     self.set_params_graph()[8])
         if not a:
-            self.error()
+            self.error(
+                '1) Переменной здесь служит ТОЛЬКО x\n\n'
+                '2) Задавайте функцию, т.е. вводите только f(x). Пример: k*x+b (y = k*x+b не пойдет)\n\n'
+                '3) Точки графика вводятся через пробел, разделителем десятичной части может выступать "," и "."\n\n'
+                '4) Проследите, что у вас кол-во точек по оси X и по оси Y совпадают')
 
     def list_making(self, place):
         place.split(' ')
@@ -712,13 +709,22 @@ class Ui_MainWindow(object):
                 self.set_text_value(self.text_mistake_var_middle, str_formula[0])
             except BaseException:
                 sonya_results = sonya_func.get_error_func(self.formula_mistake_need.toPlainText(), list_const)
+            str_formula = (self.formula_mistake_need.toPlainText())
+            self.formula_mistake.setText(sonya_func.get_final_err_expr(sonya_func.get_f(str_formula)[0],
+                                                                       sonya_func.get_error_func(
+                                                                           sonya_func.get_f(str_formula)[1],
+                                                                           list_const)[0]))
             self.set_text_value(self.text_mistake_const, list_const)
             self.set_text_value(self.text_mistake_var_middle, sonya_results[1])
             self.set_text_value(self.text_mistake_var_deviation, sonya_results[2])
-            self.formula_mistake.setText(sonya_results[0])
+
 
         except BaseException:
-            self.error()
+            self.error('1) Формула вводится в формате y = k*x. Синтаксис для операторов как в питоне.\n\n'
+                       '2) Поле с константами заполняется через пробел\n\n'
+                       '3) Нельзя использовать индексацию к буквам, использовать композицию букв как переменную или константу. Отдельный символ - отдельная единица значения\n\n'
+                       '4) Не стоит использовать заглавные буквы: не сможете посчитать значение погрешности')
+
     def create_dict_mis(self, text):
         text = text.replace(' ', '')
         text = text.split("\n")
@@ -737,7 +743,6 @@ class Ui_MainWindow(object):
             if text == ['']:
                 return {}
 
-
     def sonya_func_get_figure(self):
         try:
             dict_start = self.create_dict_mis(self.text_mistake_const.toPlainText())
@@ -747,35 +752,40 @@ class Ui_MainWindow(object):
             for key_old in dict_1:
                 key_res = key_old[1:].upper()
                 dict_res[key_res] = dict_1[key_old]
-            dict_res = dict_res|dict_start|dict_2
+            dict_res = dict_res | dict_start | dict_2
             """важно! надо будет поменять!"""
             text = self.formula_mistake.toPlainText()
-            text = text.replace('sqrt','') + "**0.5"
+            index_del = text.index('=')
+            text = text[index_del + 1:]
+            text = '(' + text + ")**0.5"
             pattern = re.compile('d\w')
             need_replace = pattern.findall(text)
             for part in need_replace:
                 part_replace = part[1].upper()
                 text = re.sub(f'{part}', part_replace, text)
             figure = sonya_func.exp_value(text, dict_res)
-            sigma = figure*dict_res[sonya_func.get_f(self.formula_mistake_need.toPlainText())[0]]
+            sigma = figure * dict_res[sonya_func.get_f(self.formula_mistake_need.toPlainText())[0]]
 
             rang = self.rung_figure(sigma)
             if rang != 0 and rang != 1:
-                sigma = round(sigma*10**rang, 3)
-                self.number_mistake.setText(f'({round(dict_res[sonya_func.get_f(self.formula_mistake_need.toPlainText())[0]]*10**rang)} ± {sigma})* 10**({rang})')
-                self.number_mistake.append(f'ε={round(figure*100, self.rung_figure(figure*100)+1)} %')
-            elif rang == 0:
                 sigma = round(sigma * 10 ** rang, 3)
+                self.number_mistake.setText(
+                    f'({round(dict_res[sonya_func.get_f(self.formula_mistake_need.toPlainText())[0]] * 10 ** rang)} ± {sigma})* 10**({rang})')
+                self.number_mistake.append(f'ε={round(figure * 100, self.rung_figure(figure * 100) + 1)} %')
+            elif rang == 0:
                 self.number_mistake.setText(
                     f'{round(dict_res[sonya_func.get_f(self.formula_mistake_need.toPlainText())[0]] * 10 ** rang)} ± {sigma}')
                 self.number_mistake.append(f'ε={round(figure * 100, self.rung_figure(figure * 100) + 1)} %')
             elif rang == 1:
-                sigma = round(sigma * 10 ** rang, 3)
+                sigma = round(sigma, 3)
                 self.number_mistake.setText(
-                    f'{round(dict_res[sonya_func.get_f(self.formula_mistake_need.toPlainText())[0]] * 10 ** rang*10)} ± {sigma*10}')
+                    f'{round(dict_res[sonya_func.get_f(self.formula_mistake_need.toPlainText())[0]])} ± {sigma}')
                 self.number_mistake.append(f'ε={round(figure * 100, self.rung_figure(figure * 100) + 1)} %')
         except BaseException:
-            self.error()
+            self.error('1) Возвращение к изначальной формуле: нельзя использовать индексацию к буквам, использовать композицию букв как переменную или константу. Отдельный символ - отдельная единица значения.\n\n'
+                       '2) Возвращение к изначальной формуле: нельзя использовать заглавные буквы!\n\n'
+                       '3) Коррекно заполняйте значениями. Можно использовать "," и "."\n\n'
+                       '4) Если возникла ошибка: обновляйте окно и начинайте заново.\n\n')
 
     def rung_figure(self, figure):
         n = 0
@@ -794,13 +804,7 @@ class Ui_MainWindow(object):
                     break
         else:
             n = -flag
-
         return n
-
-
-
-
-
 
 
 if __name__ == "__main__":
