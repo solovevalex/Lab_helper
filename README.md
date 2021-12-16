@@ -18,3 +18,8 @@
 PyQt5
 regex
 sys
+matplotlib
+tkinter
+numpy
+sympy
+scipy.optimize
