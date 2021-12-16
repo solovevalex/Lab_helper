@@ -73,6 +73,24 @@ def get_error_func(str_exp, constants):
     return str_error_func_user, str_var_only, diff_list_user, str_error_func_calc, diff_list_calc
 
 '''
+get_f -- делит уравнение на левую и правую часть.
+Передаются значения:
+    str -- уравнение.
+Возвращаются:
+    f -- левая часть;
+    str_ -- правая часть (выражение для дальнейших подсчетов).
+'''
+def get_f(str):
+    for i in range(len(str)):
+        if str[i] == '=':
+            f = str[:i]
+            str_ = str.replace(f, "")
+            break
+    f = f.replace(" ", "")
+    return f, str_
+
+
+'''
 my_str = "x * Y"
 str_error_func_user, str_var_only, diff_list_user, str_error_func_calc, diff_list_calc = get_error_func(my_str,[])
 print(str_error_func_calc)
