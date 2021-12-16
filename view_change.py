@@ -497,8 +497,25 @@ class Ui_MainWindow(object):
         self.menu_btn.addAction('Справка', self.action_clicked)
 
     def action_clicked(self):
-        knowledge = Window()
-        knowledge.show()
+        error = QMessageBox()
+        error.setWindowTitle("Справка")
+        error.setText("Приветствую вас в нашем приложении!!!")
+        error.setIcon(QMessageBox.Information)
+        error.setStandardButtons(QMessageBox.Ok)
+
+        error.setDefaultButton(QMessageBox.Ok)
+        error.setInformativeText("Нажмите на Show Details, чтобы узнать детали")
+        error.setDetailedText('Часть погрешности\nЗдесь вы получите формулу для расчета погрешности косвенных измерений, а так же сможете численно оценить эту погрешность. '
+                              'Для того, чтобы все работало корректно нужно корректно вводить данные!\n\n'
+                              '1) Формула вводится в формате y = k*x. Синтаксис для операторов как в питоне.\n\n'
+                                '2) Поле с константами заполняется через пробел\n\n'
+                            '3) Нельзя использовать индексацию к буквам, использовать композицию букв как переменную или константу. Отдельный символ - отдельная единица значения\n\n'
+                            '4) Не стоит использовать заглавные буквы: не сможете посчитать значение погрешности')
+
+
+
+        error.exec_()
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -666,8 +683,8 @@ class Ui_MainWindow(object):
 
     def error(self, text):
         error = QMessageBox()
-        error.setWindowTitle("ошибка")
-        error.setText("cейчас это действие выполнить нельзя")
+        error.setWindowTitle("Ошибка")
+        error.setText("Cейчас это действие выполнить нельзя")
         error.setIcon(QMessageBox.Warning)
         error.setStandardButtons(QMessageBox.Ok)
 
@@ -677,6 +694,9 @@ class Ui_MainWindow(object):
 
         # error.buttonClicked.connect(self.popup_action)
         error.exec_()
+
+
+
 
     def Ann_function_final(self):
         a = ann_func.plotting_graph(self.set_params_graph()[0],
@@ -706,7 +726,6 @@ class Ui_MainWindow(object):
                 str_formula = (self.formula_mistake_need.toPlainText())
                 str_formula = sonya_func.get_f(str_formula)
                 sonya_results = sonya_func.get_error_func(str_formula[1], list_const)
-                self.set_text_value(self.text_mistake_var_middle, str_formula[0])
             except BaseException:
                 sonya_results = sonya_func.get_error_func(self.formula_mistake_need.toPlainText(), list_const)
             str_formula = (self.formula_mistake_need.toPlainText())
@@ -714,6 +733,9 @@ class Ui_MainWindow(object):
                                                                        sonya_func.get_error_func(
                                                                            sonya_func.get_f(str_formula)[1],
                                                                            list_const)[0]))
+            self.text_mistake_const.clear()
+            self.text_mistake_var_middle.clear()
+            self.text_mistake_var_deviation.clear()
             self.set_text_value(self.text_mistake_const, list_const)
             self.set_text_value(self.text_mistake_var_middle, sonya_results[1])
             self.set_text_value(self.text_mistake_var_deviation, sonya_results[2])
@@ -745,6 +767,8 @@ class Ui_MainWindow(object):
 
     def sonya_func_get_figure(self):
         try:
+            str_formula = (self.formula_mistake_need.toPlainText())
+            str_formula = sonya_func.get_f(str_formula)
             dict_start = self.create_dict_mis(self.text_mistake_const.toPlainText())
             dict_1 = self.create_dict_mis(self.text_mistake_var_deviation.toPlainText())
             dict_2 = self.create_dict_mis(self.text_mistake_var_middle.toPlainText())
@@ -764,23 +788,25 @@ class Ui_MainWindow(object):
                 part_replace = part[1].upper()
                 text = re.sub(f'{part}', part_replace, text)
             figure = sonya_func.exp_value(text, dict_res)
-            sigma = figure * dict_res[sonya_func.get_f(self.formula_mistake_need.toPlainText())[0]]
+            middle = sonya_func.exp_value(str_formula[1], dict_res)
+            sigma = figure * middle
 
             rang = self.rung_figure(sigma)
             if rang != 0 and rang != 1:
                 sigma = round(sigma * 10 ** rang, 3)
                 self.number_mistake.setText(
-                    f'({round(dict_res[sonya_func.get_f(self.formula_mistake_need.toPlainText())[0]] * 10 ** rang)} ± {sigma})* 10**({rang})')
-                self.number_mistake.append(f'ε={round(figure * 100, self.rung_figure(figure * 100) + 1)} %')
+                    f'({round(middle * 10 ** rang)} ± {sigma})* 10**({rang})')
+                self.number_mistake.append(f'ε={(round(figure, self.rung_figure(figure)+2))*100} %')
             elif rang == 0:
+                sigma = round(sigma * 10 ** rang, 3)
                 self.number_mistake.setText(
-                    f'{round(dict_res[sonya_func.get_f(self.formula_mistake_need.toPlainText())[0]] * 10 ** rang)} ± {sigma}')
-                self.number_mistake.append(f'ε={round(figure * 100, self.rung_figure(figure * 100) + 1)} %')
+                    f'{round(middle * 10 ** rang)} ± {sigma}')
+                self.number_mistake.append(f'ε={(round(figure, self.rung_figure(figure)+2))*100} %')
             elif rang == 1:
                 sigma = round(sigma, 3)
                 self.number_mistake.setText(
-                    f'{round(dict_res[sonya_func.get_f(self.formula_mistake_need.toPlainText())[0]])} ± {sigma}')
-                self.number_mistake.append(f'ε={round(figure * 100, self.rung_figure(figure * 100) + 1)} %')
+                    f'{round(middle)} ± {sigma}')
+                self.number_mistake.append(f'ε={(round(figure, self.rung_figure(figure)+2))*100} %')
         except BaseException:
             self.error('1) Возвращение к изначальной формуле: нельзя использовать индексацию к буквам, использовать композицию букв как переменную или константу. Отдельный символ - отдельная единица значения.\n\n'
                        '2) Возвращение к изначальной формуле: нельзя использовать заглавные буквы!\n\n'
