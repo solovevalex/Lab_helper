@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMessageBox, QAction
+from PyQt5.QtWidgets import QMessageBox
 import re
 import Function_Plotting_Graph as ann_func
 import Indirect_measurements_error as sonya_func
@@ -13,6 +13,15 @@ value_use = dict(graph_2=0, graph_3=0, graph_4=0, graph_5=0, graph_6=0, graph_7=
 value_names = ['graph_1', 'graph_2', 'graph_3', 'graph_4', 'graph_5', 'graph_6', 'graph_7', 'graph_8',
                'graph_9', 'graph_10']
 str_exp = ""
+
+class Window(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(Window, self).__init__()
+        self.setWindowTitle("спаравка")
+        self.setGeometry(300, 250, 350, 200)
+
+        self.text_edit = QtWidgets.QTextEdit(self)
+        self.setCentralWidget(self.text_edit)
 
 
 class add_graph():
@@ -489,26 +498,14 @@ class Ui_MainWindow(object):
         self.menu_btn.setObjectName("menu_btn")
         self.menuBar.addAction(self.menu_btn.menuAction())
         self.menuBar.addMenu(self.menu_btn)
-
-        # open_file = fileMenu.addMenu("&Открыть")
-        # save_file = fileMenu.addMenu("&Сохранить")
-
         self.menu_btn.addAction('Справка', self.action_clicked)
+
     def action_clicked(self):
-        error = QMessageBox()
-        error.setWindowTitle("О программе")
-        error.setText("Приветствуем!")
-        error.setStandardButtons(QMessageBox.Reset | QMessageBox.Ok | QMessageBox.Cancel)
-
-        error.setDefaultButton(QMessageBox.Ok)
-        error.setInformativeText("два раза действие не выполнить")
-        error.setDetailedText("детали")
-        error.setDetailedText("новове")
+        knowledge = Window()
+        knowledge.show()
 
 
 
-
-        error.exec_()
 
 
     def retranslateUi(self, MainWindow):
@@ -718,6 +715,8 @@ class Ui_MainWindow(object):
             self.set_text_value(self.text_mistake_var_middle, sonya_results[1])
             self.set_text_value(self.text_mistake_var_deviation, sonya_results[2])
             self.formula_mistake.setText(sonya_results[0])
+
+
         except BaseException:
             self.error()
     def create_dict_mis(self, text):
@@ -749,30 +748,18 @@ class Ui_MainWindow(object):
             for key_old in dict_1:
                 key_res = key_old[1:].upper()
                 dict_res[key_res] = dict_1[key_old]
-            print(dict_res)
             dict_res = dict_res|dict_start|dict_2
-            print(dict_res, 'ok')
             text = self.formula_mistake.toPlainText()
             text = text.replace('sqrt','') + "**0.5"
-            print(text)
             pattern = re.compile('d\w')
             need_replace = pattern.findall(text)
             for part in need_replace:
                 part_replace = part[1].upper()
                 text = re.sub(f'{part}', part_replace, text)
-            print(text, dict_res)
             figure = sonya_func.exp_value(text, dict_res)
-            print(figure)
             self.number_mistake.setText(f'{figure}')
         except BaseException:
             self.error()
-
-
-
-
-
-
-
 
 if __name__ == "__main__":
     import sys
