@@ -811,7 +811,7 @@ class Ui_MainWindow(object):
 
             if self.rung_figure(figure)>0:
                 self.number_mistake.setText(
-                    f'({round(middle * 10 ** rang, rang)} ± {sigma})* 10**({-rang})')
+                    f'({round(middle * 10 ** rang, 3)} ± {sigma})* 10**({-rang})')
                 self.number_mistake.append(f'ε={round(figure*100, 2)} %')
             if self.rung_figure(figure)<=0:
                 self.number_mistake.setText(
