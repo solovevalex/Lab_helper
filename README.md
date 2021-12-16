@@ -15,11 +15,4 @@
 
 Разумеется необходимо импортировать некоторые библиотеки. Как то:
 
-PyQt5
-regex
-sys
-matplotlib
-tkinter
-numpy
-sympy
-scipy.optimize
+PyQt5; regex; sys; matplotlib; tkinter; numpy; sympy; scipy.optimize
