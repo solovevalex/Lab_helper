@@ -31,13 +31,13 @@ def plotting_graph(formulas: list, x: list, y: list, title: str,
         return False
 
 # пример входных данных
-# formulas = ['a \cdot x^3 + b \cdot x^2' , 'a*x + b']
-# x = ['-5 -4 -3 -2 -1 0 1 2 3 4 5', '-5 -4 -3 -2 ']
-# y = ['0 16 18 12 4 0.3 6 28 72 144 250', '-6 -5 -4 -3']
-# title = 'График_1'
-# x_label = 't, c'
-# y_label = 'l, m'
-# error = True
-# roots = True
-# extr = True
-# check = plotting_graph(formulas, x, y, title, x_label, y_label, error, roots, extr)
+formulas = ['a \cdot x^3 + b \cdot x^2' , 'a*x + b']
+x = ['-5 -4 -3 -2 -1 0 1 2 3 4 5', '-5 -4 -3 -2 ']
+y = ['0 16 18 12 4 0.3 6 28 72 144 250', '-6 -5 -4 -3']
+title = 'График_1'
+x_label = 't, c'
+y_label = 'l, m'
+error = True
+roots = True
+extr = True
+check = plotting_graph(formulas, x, y, title, x_label, y_label, error, roots, extr)
