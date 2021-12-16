@@ -84,20 +84,34 @@ def get_f(str):
     for i in range(len(str)):
         if str[i] == '=':
             f = str[:i]
-            str_ = str.replace(f, "").replace('=','')
+            str_ = str.replace(f, "")
             break
     f = f.replace(" ", "")
     return f, str_
 
 
 '''
-my_str = "x * Y"
-str_error_func_user, str_var_only, diff_list_user, str_error_func_calc, diff_list_calc = get_error_func(my_str,[])
-print(str_error_func_calc)
-
-print(exp_value(str_error_func_calc, {'x':5, 'y':4, 'X':0.1, 'Y':0.2}))
-
-
-print(diff_list_user)
-print(diff_list_calc)
+(функция не расчитана на применение в других файлах!)
+get_relative_err -- левая часть выражения.
+Передаются значения:
+    y -- величина, для которой считаем погрешность;
+Возвращаются:
+    rel_err -- левая часть.
 '''
+def get_relative_err(y):
+    rel_err = "1/" + y + " * d" + y;
+    return rel_err
+
+'''
+get_final_err_expr -- итоговое выражение для косвенной погрешности.
+Передаются значения:
+    y -- величина, для которой считаем погрешность;
+    err_expr -- правая часть выражения;
+Возвращаются:
+    final_err_expr -- итоговое выражение для косвенной погрешности.
+'''
+def get_final_err_expr(y, err_expr):
+    rel_err = get_relative_err(y)
+    final_err_expr = rel_err + " = " + err_expr
+    return final_err_expr
+
