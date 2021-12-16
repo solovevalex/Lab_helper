@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
+
 import re
 import Function_Plotting_Graph as ann_func
 import Indirect_measurements_error as sonya_func
@@ -109,7 +110,6 @@ class Ui_MainWindow(object):
 
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1000, 719)
-        print(type(MainWindow))
         """Создание всего..."""
         self.create_main()
         self.create_menu_Bar()
@@ -504,10 +504,6 @@ class Ui_MainWindow(object):
         knowledge = Window()
         knowledge.show()
 
-
-
-
-
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -709,13 +705,17 @@ class Ui_MainWindow(object):
     def sonya_func_get_formula_mis(self):
         try:
             list_const = (list(self.list_making(self.mistake_name_const.toPlainText())))
-            str_formula = (self.formula_mistake_need.toPlainText())
-            sonya_results = sonya_func.get_error_func(str_formula, list_const)
+            try:
+                str_formula = (self.formula_mistake_need.toPlainText())
+                str_formula = sonya_func.get_f(str_formula)
+                sonya_results = sonya_func.get_error_func(str_formula[1], list_const)
+                self.set_text_value(self.text_mistake_var_middle, str_formula[0])
+            except BaseException:
+                sonya_results = sonya_func.get_error_func(self.formula_mistake_need.toPlainText(), list_const)
             self.set_text_value(self.text_mistake_const, list_const)
             self.set_text_value(self.text_mistake_var_middle, sonya_results[1])
             self.set_text_value(self.text_mistake_var_deviation, sonya_results[2])
             self.formula_mistake.setText(sonya_results[0])
-
 
         except BaseException:
             self.error()
@@ -744,11 +744,11 @@ class Ui_MainWindow(object):
             dict_1 = self.create_dict_mis(self.text_mistake_var_deviation.toPlainText())
             dict_2 = self.create_dict_mis(self.text_mistake_var_middle.toPlainText())
             dict_res = {}
-            print(dict_1)
             for key_old in dict_1:
                 key_res = key_old[1:].upper()
                 dict_res[key_res] = dict_1[key_old]
             dict_res = dict_res|dict_start|dict_2
+            """важно! надо будет поменять!"""
             text = self.formula_mistake.toPlainText()
             text = text.replace('sqrt','') + "**0.5"
             pattern = re.compile('d\w')
@@ -757,9 +757,51 @@ class Ui_MainWindow(object):
                 part_replace = part[1].upper()
                 text = re.sub(f'{part}', part_replace, text)
             figure = sonya_func.exp_value(text, dict_res)
-            self.number_mistake.setText(f'{figure}')
+            sigma = figure*dict_res[sonya_func.get_f(self.formula_mistake_need.toPlainText())[0]]
+
+            rang = self.rung_figure(sigma)
+            if rang != 0 and rang != 1:
+                sigma = round(sigma*10**rang, 3)
+                self.number_mistake.setText(f'({round(dict_res[sonya_func.get_f(self.formula_mistake_need.toPlainText())[0]]*10**rang)} ± {sigma})* 10**({rang})')
+                self.number_mistake.append(f'ε={round(figure*100, self.rung_figure(figure*100)+1)} %')
+            elif rang == 0:
+                sigma = round(sigma * 10 ** rang, 3)
+                self.number_mistake.setText(
+                    f'{round(dict_res[sonya_func.get_f(self.formula_mistake_need.toPlainText())[0]] * 10 ** rang)} ± {sigma}')
+                self.number_mistake.append(f'ε={round(figure * 100, self.rung_figure(figure * 100) + 1)} %')
+            elif rang == 1:
+                sigma = round(sigma * 10 ** rang, 3)
+                self.number_mistake.setText(
+                    f'{round(dict_res[sonya_func.get_f(self.formula_mistake_need.toPlainText())[0]] * 10 ** rang*10)} ± {sigma*10}')
+                self.number_mistake.append(f'ε={round(figure * 100, self.rung_figure(figure * 100) + 1)} %')
         except BaseException:
             self.error()
+
+    def rung_figure(self, figure):
+        n = 0
+        figure_work = figure.__str__()
+        try:
+            flag = figure_work.index(',')
+        except ValueError:
+            flag = figure_work.index('.')
+        if flag == 1:
+            for i in range(len(figure_work)):
+                if figure_work[i] == '0':
+                    n += 1
+                elif figure_work[i] == ',' or figure_work[i] == '.':
+                    pass
+                elif figure_work[i] != '0':
+                    break
+        else:
+            n = -flag
+
+        return n
+
+
+
+
+
+
 
 if __name__ == "__main__":
     import sys

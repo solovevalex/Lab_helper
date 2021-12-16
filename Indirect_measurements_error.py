@@ -84,7 +84,7 @@ def get_f(str):
     for i in range(len(str)):
         if str[i] == '=':
             f = str[:i]
-            str_ = str.replace(f, "")
+            str_ = str.replace(f, "").replace('=','')
             break
     f = f.replace(" ", "")
     return f, str_
