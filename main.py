@@ -802,23 +802,21 @@ class Ui_MainWindow(object):
             figure = sonya_func.exp_value(text, dict_res)
             middle = sonya_func.exp_value(str_formula[1], dict_res)
             sigma = figure * middle
-
+            print(sigma)
             rang = self.rung_figure(sigma)
-            if rang != 0 and rang != 1:
-                sigma = round(sigma * 10 ** rang, 3)
+            # if rang != 0 and rang != 1:
+            sigma = round(sigma * 10 ** rang, 3)
+
+
+            if self.rung_figure(figure)>0:
                 self.number_mistake.setText(
-                    f'({round(middle * 10 ** rang)} ± {sigma})* 10**({rang})')
-                self.number_mistake.append(f'ε={(round(figure, self.rung_figure(figure)+2))*100} %')
-            elif rang == 0:
-                sigma = round(sigma * 10 ** rang, 3)
+                    f'({round(middle * 10 ** rang, rang)} ± {sigma})* 10**({-rang})')
+                self.number_mistake.append(f'ε={round(figure*100, 2)} %')
+            if self.rung_figure(figure)<=0:
                 self.number_mistake.setText(
-                    f'{round(middle * 10 ** rang)} ± {sigma}')
-                self.number_mistake.append(f'ε={(round(figure, self.rung_figure(figure)+2))*100} %')
-            elif rang == 1:
-                sigma = round(sigma, 3)
-                self.number_mistake.setText(
-                    f'{round(middle)} ± {sigma}')
-                self.number_mistake.append(f'ε={(round(figure, self.rung_figure(figure)+2))*100} %')
+                    f'({round(middle * 10 ** rang, 3)} ± {sigma})* 10**({-rang})')
+                self.number_mistake.append(f'ε={round(figure*100, 2)} %')
+
         except BaseException:
             self.error('1) Возвращение к изначальной формуле: нельзя использовать индексацию к буквам, использовать композицию букв как переменную или константу. Отдельный символ - отдельная единица значения.\n\n'
                        '2) Возвращение к изначальной формуле: нельзя использовать заглавные буквы!\n\n'
@@ -841,13 +839,11 @@ class Ui_MainWindow(object):
                 elif figure_work[i] != '0':
                     break
         else:
-            n = -flag
+            n = -flag+1
         return n
-
 
 if __name__ == "__main__":
     import sys
-
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
