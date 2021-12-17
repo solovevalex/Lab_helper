@@ -274,7 +274,7 @@ def plotting(formulas, coeffs_1, xdata, ydata, popt, pcov, title, x_label, y_lab
     for i in range(len(pcov)):
         sigma_dict.append(dict(zip(coeffs_1[i], sigma[i])))
 
-    print('ok')
+
     for i in range(len(xdata)):
         formula = "y(x) = " + "$" + formulas[i] + "$"
         s = str(i+1) + ') ' + str(formula) + ", "
@@ -284,35 +284,39 @@ def plotting(formulas, coeffs_1, xdata, ydata, popt, pcov, title, x_label, y_lab
         a.plot(xdata[i], ydata[i], 'o', color=c)
         xdata_1 = np.linspace(np.min(xdata[i]), np.max(xdata[i]), 100)
         a.plot(xdata_1, functions[i](xdata_1, *popt[i]), '-', color=c, label=s)
-    print('ok')
+
 
     a.legend(loc=0, shadow=True)
 
     a.set_title(str(title), fontsize=16)
     a.set_xlabel(str(x_label), fontsize=14)
     a.set_ylabel(str(y_label), fontsize=14)
-    print('ok')
+
     canvas = FigureCanvasTkAgg(fig, master=window)
     canvas.get_tk_widget().pack(side="top",fill='both',expand=True)
     canvas.draw()
-    print('ok')
+
     text = Text(width=50, height=10)
     text.pack()
-    print('ok')
+
     for i in range(len(xdata) - 1, -1, -1):
         if error:
             text.insert(1.0, 'sigma_' + str(i + 1) + ' = ' + str(sigma_dict[i]) + '\n')
-        print('ok')
+
         try:
             if roots:
                 roots = find_roots(functions[i], xdata[i], popt[i], a)
                 text.insert(2.0, 'roots_' + str(i + 1) + '=' + str(roots) + '\n')
+        except BaseException:
+            pass
+        try:
+            print('error')
             if extr:
                 mins, maxs = find_extrems(functions[i], xdata[i], popt[i], a)
                 text.insert(3.0, 'minimums_' + str(i + 1) + '=' + str(mins) + '\n')
                 text.insert(3.0, 'maximums_' + str(i + 1) + '=' + str(maxs) + '\n')
         except BaseException:
-            print('error')
+           pass
         text.insert(1.0, formulas[i] + '\n')
 
     window.mainloop()
