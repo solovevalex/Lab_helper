@@ -795,12 +795,14 @@ class Ui_MainWindow(object):
             text = self.formula_mistake.toPlainText()
             index_del = text.index('=')
             text = text[index_del + 1:]
-            text = '(' + text + ")**0.5"
+            # text = '(' + text + ")**0.5"
             pattern = re.compile('d\w')
             need_replace = pattern.findall(text)
             for part in need_replace:
                 part_replace = part[1].upper()
                 text = re.sub(f'{part}', part_replace, text)
+            # text = text.replace('sqrt', '').replace('(', '',1)
+            print(text)
             figure = sonya_func.exp_value(text, dict_res)
             middle = sonya_func.exp_value(str_formula[1], dict_res)
             sigma = figure * middle
@@ -808,7 +810,6 @@ class Ui_MainWindow(object):
             rang = self.rung_figure(sigma)
             # if rang != 0 and rang != 1:
             sigma = round(sigma * 10 ** rang, 3)
-
 
             if self.rung_figure(figure)>0:
                 self.number_mistake.setText(
