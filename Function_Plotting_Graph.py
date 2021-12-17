@@ -22,6 +22,7 @@ def plotting_graph(formulas: list, x: list, y: list, title: str,
         formulas_1, coeffs_1 = parse(formulas)
         xdata, ydata, check_3 = data_preparing(x, y)
         popt, pcov, check_2 = approximation(xdata, ydata, coeffs_1)
+        print(check_1, check_2, check_3)
         if check_1 and check_2 and check_3:
             plotting(formulas, coeffs_1, xdata, ydata, popt, pcov, title, x_label, y_label, error, roots, extr)
             return True
